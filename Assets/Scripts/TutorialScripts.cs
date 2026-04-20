@@ -6,6 +6,7 @@ public class IntroManager : MonoBehaviour
 {
     public TextMeshProUGUI subtitleText;
     public float typingSpeed = 0.05f; // 글자가 써지는 속도 (낮을수록 빠름)
+    public bool hasTriggeredGunTutorial = false;
 
     void Start()
     {
@@ -37,7 +38,7 @@ public class IntroManager : MonoBehaviour
         // 2. 두 번째 문장 타이핑
         yield return StartCoroutine(TypeText("WASD키를 눌러 앞으로 이동해주십시오."));
 
-        // 마지막 메시지 보여주고 3초 뒤 삭제 (선택 사항)
+        // 마지막 메시지 보여주고 3초 뒤 삭제
         yield return new WaitForSeconds(3f);
         subtitleText.text = "";
     }
@@ -50,10 +51,6 @@ public class IntroManager : MonoBehaviour
         foreach (char letter in message.ToCharArray())
         {
             subtitleText.text += letter; // 한 글자씩 추가
-
-            // 타이핑 효과음이 있다면 여기서 재생하면 딱 좋습니다!
-            // GetComponent<AudioSource>().Play(); 
-
             yield return new WaitForSeconds(typingSpeed); // 설정한 속도만큼 대기
         }
     }
