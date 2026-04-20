@@ -6,8 +6,13 @@ public class SettingsManager : MonoBehaviour
 {
     [Header("UI Panels")]
     public GameObject settingsPanel;
-    
+
     [SerializeField] private Button goMainBtn;
+
+    [Header("Audio")]
+    public AudioSource bgmSource;
+    public Slider volumeSlider;
+
     void Start()
     {
         if (settingsPanel != null)
@@ -16,6 +21,15 @@ public class SettingsManager : MonoBehaviour
         if (goMainBtn != null)
         {
             goMainBtn.onClick.AddListener(quitGame);
+        }
+
+        if (volumeSlider != null && bgmSource != null)
+        {
+            float saved = PlayerPrefs.GetFloat("BGMVolume", 1f);
+            volumeSlider.value = saved;
+            bgmSource.volume = saved;
+
+            volumeSlider.onValueChanged.AddListener(SetVolume);
         }
     }
 
@@ -44,11 +58,20 @@ public class SettingsManager : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-
     }
+
+    public void SetVolume(float value)
+    {
+        if (bgmSource != null)
+        {
+            bgmSource.volume = value;
+            PlayerPrefs.SetFloat("BGMVolume", value);
+        }
+    }
+
     public void quitGame()
     {
-        //Debug.Log("start clicked!");
+        Time.timeScale = 1f;
         SceneManager.LoadScene("mainScreen");
     }
 }

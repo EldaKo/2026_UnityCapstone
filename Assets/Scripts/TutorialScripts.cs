@@ -4,6 +4,10 @@ using System.Collections;
 
 public class IntroManager : MonoBehaviour
 {
+    [Header("OBJ setting")]
+    public GameObject targetObject;
+
+
     public TextMeshProUGUI subtitleText;
     public float typingSpeed = 0.05f;
 
@@ -46,6 +50,9 @@ public class IntroManager : MonoBehaviour
 
     IEnumerator GunSequence()
     {
+        if (targetObject != null)
+            targetObject.SetActive(true);
+
         yield return StartCoroutine(TypeText("총기를 획득했습니다. 좌클릭으로 발사할 수 있습니다."));
 
         yield return new WaitForSeconds(2f);
