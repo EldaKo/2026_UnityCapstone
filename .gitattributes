@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+Assets/NeoFPS/Samples/SinglePlayer/Scenes/DemoFacility/DemoFacility_Scene/Lightmap-0_comp_light.exr filter=lfs diff=lfs merge=lfs -text
+Assets/NeoFPS/Samples/SinglePlayer/Scenes/DemoFacility/DemoFacility_Scene/Lightmap-1_comp_light.exr filter=lfs diff=lfs merge=lfs -text
+Assets/NeoFPS/Samples/SinglePlayer/Scenes/DemoFacility/DemoFacility_Scene/Lightmap-2_comp_light.exr filter=lfs diff=lfs merge=lfs -text
+Assets/NeoFPS/Samples/SinglePlayer/Scenes/DemoFacility/DemoFacility_Scene/Lightmap-3_comp_light.exr filter=lfs diff=lfs merge=lfs -text
+Assets/NeoFPS/Samples/SinglePlayer/Scenes/DemoFacility/DemoFacility_Scene/Lightmap-4_comp_light.exr filter=lfs diff=lfs merge=lfs -text
+Assets/NeoFPS/Samples/SinglePlayer/Scenes/FeatureDemos/JetpacksAndGuidedMissiles/FeatureDemo_JetpacksGuidedMissiles/Lightmap-3_comp_light.exr filter=lfs diff=lfs merge=lfs -text

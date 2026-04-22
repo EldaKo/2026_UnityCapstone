@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8b55c6296f932cb4cb5f8e6f7ec59660
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/RenderPipelines/Prefabs/OpticsSRP_RedDotMRO.prefab
+  uploadId: 899482

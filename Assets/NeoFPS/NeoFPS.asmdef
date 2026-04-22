@@ -1,0 +1,20 @@
+{
+    "name": "NeoFPS",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Postprocessing.Runtime",
+        "NeoFPS.Managers",
+        "NeoSaveGames",
+        "NeoSaveGames.Editor",
+        "Unity.RenderPipelines.Universal.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

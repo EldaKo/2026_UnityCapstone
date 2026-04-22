@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d2b5fcac051468743876a1120bb07b7e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Samples/Shared/Prefabs/Weapons/SwappableInventory/Firearm_DualMode_TagTracking.prefab
+  uploadId: 899482

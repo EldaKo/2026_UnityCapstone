@@ -1,0 +1,10 @@
+fileFormatVersion: 2
+guid: bbacc45be6ce4079993edfdfe93efe61
+timeCreated: 1693993977
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Core/Weapons/ModularFirearm/Shooters/ThrownProjectileShooter.cs
+  uploadId: 899482

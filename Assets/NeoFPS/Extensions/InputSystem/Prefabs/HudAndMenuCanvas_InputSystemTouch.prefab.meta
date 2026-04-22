@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9789686d4c7d48c49aa13fe80fd03e21
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/InputSystem/Prefabs/HudAndMenuCanvas_InputSystemTouch.prefab
+  uploadId: 899482

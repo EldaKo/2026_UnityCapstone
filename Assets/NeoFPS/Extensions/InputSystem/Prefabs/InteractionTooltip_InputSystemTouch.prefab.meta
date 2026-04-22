@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a29691f15e6056243ab4ee64eaf57dd3
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/InputSystem/Prefabs/InteractionTooltip_InputSystemTouch.prefab
+  uploadId: 899482

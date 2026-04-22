@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: ea0788c34b2a18845b9a2661f54b1a6d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/InputSystem/InputHandlers/InputSystemVehicle.cs
+  uploadId: 899482

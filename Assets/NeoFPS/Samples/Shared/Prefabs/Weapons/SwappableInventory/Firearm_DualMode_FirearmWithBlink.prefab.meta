@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7721028571e331e4abe5b1bb33a46da1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Samples/Shared/Prefabs/Weapons/SwappableInventory/Firearm_DualMode_FirearmWithBlink.prefab
+  uploadId: 899482

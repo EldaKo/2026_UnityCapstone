@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cf43f3bafd6ac7d4bb7e6c9dd6f9867c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/RenderPipelines/Materials/Shared/WeaponOverheat_AxisMasked.mat
+  uploadId: 899482

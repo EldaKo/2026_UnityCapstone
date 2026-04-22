@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2e04ad8f130429543b59f47f927a5f3e
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/RenderPipelines/Prefabs/AttachmentSRP_Laser_TopMounted.prefab
+  uploadId: 899482

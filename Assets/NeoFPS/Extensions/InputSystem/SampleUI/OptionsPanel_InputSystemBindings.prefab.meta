@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 42a0413f050c40248a0cca5884d3df89
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/InputSystem/SampleUI/OptionsPanel_InputSystemBindings.prefab
+  uploadId: 899482

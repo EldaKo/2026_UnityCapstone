@@ -1,0 +1,12 @@
+The following extension packages exist to extend NeoFPS with optional functionality using Unity packages
+
+Cinemachine
+- Adds a cinemachine first person camera, along with a demo character, spawner and scene
+- Please see the NeoFpsExtension_Cinemachine text file for details and installation instructions
+
+Render Pipelines
+- BIRP replaces the demo materials, scenes and some prefabs to switch them to the built-in render pipeline
+- URP contains shader graph versions of the NeoFPS shaders, along with demo materials, scripts and prefabs. It also replaces the NeoFPS demo materials with versions using the new shader graphs for materials that won't convert automatically
+- HDRP contains shader graph versions of the NeoFPS shaders, along with demo materials, scripts and prefabs. It also replaces the NeoFPS demo materials with versions using the new shader graphs for materials that won't convert automatically
+
+The render pipeline assets can be installed from the "Unity Settings" page in the NeoFPS Hub

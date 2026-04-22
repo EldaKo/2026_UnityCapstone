@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 2ce35f65fcecaf644a6e7d27fce551d4
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/RenderPipelines/ShaderGraphs/Shared/Effect_BlinkTarget.shadergraph
+  uploadId: 899482

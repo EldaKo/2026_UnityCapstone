@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4146b20df61bf3140a93d9a90a6495d6
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 112000000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Samples/SinglePlayer/Scenes/FeatureDemos/CameraShake/FeatureDemo_CameraShake/LightingData.asset
+  uploadId: 899482

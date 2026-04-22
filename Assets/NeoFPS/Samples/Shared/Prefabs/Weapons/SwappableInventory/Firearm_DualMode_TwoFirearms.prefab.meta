@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 835498bd33e391f4885b2761c38ab7b3
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Samples/Shared/Prefabs/Weapons/SwappableInventory/Firearm_DualMode_TwoFirearms.prefab
+  uploadId: 899482

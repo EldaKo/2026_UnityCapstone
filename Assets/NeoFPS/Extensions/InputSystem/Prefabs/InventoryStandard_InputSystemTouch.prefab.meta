@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: aae9a725825231d458e08d74f15b0e09
+timeCreated: 1484671756
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: -1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/InputSystem/Prefabs/InventoryStandard_InputSystemTouch.prefab
+  uploadId: 899482

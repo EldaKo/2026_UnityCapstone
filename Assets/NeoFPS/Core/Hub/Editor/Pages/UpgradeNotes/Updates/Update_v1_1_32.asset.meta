@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4764fb0a91be68f44848fc86a6ba3d4c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Core/Hub/Editor/Pages/UpgradeNotes/Updates/Update_v1_1_32.asset
+  uploadId: 899482

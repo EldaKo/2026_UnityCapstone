@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d702795aab3bc174eb6bd7bb94e1014d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 4890085278179872738
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Samples/SinglePlayer/Scenes/MainMenu/MainMenuSettings.lighting
+  uploadId: 899482

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1a4695f881f495040a278e8a543af6b4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Extensions/RenderPipelines/Materials/Shared/BulletTrail_DissolveAdditiveEdgeBlend.mat
+  uploadId: 899482
