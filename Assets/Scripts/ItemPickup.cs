@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 public class ItemPickup : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class ItemPickup : MonoBehaviour
             ItemInteraction();
         }
     }
+
+
 
     void ItemInteraction()
     {
