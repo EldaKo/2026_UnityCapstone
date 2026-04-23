@@ -1,64 +1,80 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public CharacterController controller;
+    [Header("Components")]
+    public Rigidbody rb;
+    public CapsuleCollider col;
 
     [Header("Movement")]
     public float walkSpeed = 8f;
     public float crouchSpeed = 4f;
-    public float gravity = -19.62f;
-    public float jumpHeight = 2f;
+    public float jumpForce = 5f;
 
     [Header("Crouch Settings")]
     public float normalHeight = 2f;
     public float crouchHeight = 1f;
     public Transform cameraTransform;
-    public float cameraNormalY = 0.8f; 
+    public float cameraNormalY = 0.8f;
     public float cameraCrouchY = 0.4f;
 
     [Header("Ground Check")]
     public Transform groundCheck;
-    public float groundDistance = 0.4f;
+    public float groundDistance = 0.2f;
     public LayerMask groundMask;
 
-    Vector3 velocity;
     bool isGrounded;
     float currentSpeed;
+
+    void Start()
+    {
+        rb.freezeRotation = true;
+        rb.useGravity = true;
+    }
 
     void Update()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-        if (isGrounded && velocity.y < 0)
+        HandleCrouch();
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            velocity.y = -2f;
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
         }
+    }
+
+    void FixedUpdate()
+    {
+        Move();
+    }
+
+    void Move()
+    {
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
+
+        Vector3 move = (transform.right * x + transform.forward * z).normalized;
+
+        Vector3 targetVelocity = move * currentSpeed;
+        targetVelocity.y = rb.linearVelocity.y;
+
+        rb.linearVelocity = targetVelocity;
+    }
+
+    void HandleCrouch()
+    {
         if (Input.GetKey(KeyCode.LeftControl))
         {
-            controller.height = crouchHeight;
+            col.height = crouchHeight;
             currentSpeed = crouchSpeed;
             cameraTransform.localPosition = new Vector3(0, cameraCrouchY, 0);
         }
         else
         {
-            controller.height = normalHeight;
+            col.height = normalHeight;
             currentSpeed = walkSpeed;
             cameraTransform.localPosition = new Vector3(0, cameraNormalY, 0);
         }
-
-        float x = Input.GetAxisRaw("Horizontal");
-        float z = Input.GetAxisRaw("Vertical");
-
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move.normalized * currentSpeed * Time.deltaTime);
-
-
-        if (Input.GetButtonDown("Jump") && isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-        }
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
     }
 }
