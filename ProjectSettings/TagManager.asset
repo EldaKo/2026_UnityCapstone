@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - AI
+  - Item
   layers:
   - Default
   - TransparentFX
