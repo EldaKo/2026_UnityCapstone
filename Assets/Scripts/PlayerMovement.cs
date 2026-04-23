@@ -6,10 +6,10 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody rb;
     public CapsuleCollider col;
 
-    [Header("Movement")]
-    public float walkSpeed = 8f;
-    public float crouchSpeed = 4f;
-    public float jumpForce = 5f;
+    private float walkSpeed = 5f;
+    private float crouchSpeed = 4f;
+    private float jumpForce = 3f;
+    private float fallMultiplier = 5f;
 
     [Header("Crouch Settings")]
     public float normalHeight = 2f;
@@ -40,13 +40,15 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
         }
     }
 
     void FixedUpdate()
     {
         Move();
+        ApplyBetterFall();
     }
 
     void Move()
@@ -55,11 +57,24 @@ public class PlayerMovement : MonoBehaviour
         float z = Input.GetAxisRaw("Vertical");
 
         Vector3 move = (transform.right * x + transform.forward * z).normalized;
+        float finalSpeed = currentSpeed;
+        if (Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl))
+        {
+            finalSpeed *= 1.5f;
+        }
 
-        Vector3 targetVelocity = move * currentSpeed;
+        Vector3 targetVelocity = move * finalSpeed;
+
         targetVelocity.y = rb.linearVelocity.y;
-
         rb.linearVelocity = targetVelocity;
+    }
+
+    void ApplyBetterFall()
+    {
+        if (rb.linearVelocity.y < 0)
+        {
+            rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+        }
     }
 
     void HandleCrouch()
