@@ -6,6 +6,7 @@ public class SettingScript : MonoBehaviour
 {
     [Header("UI Panels")]
     public GameObject settingsPanel;
+    public GameObject InventoryPanel;
 
     [SerializeField] private Button goMainBtn;
 
@@ -17,6 +18,8 @@ public class SettingScript : MonoBehaviour
     {
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
+
+        if (InventoryPanel !=  null) InventoryPanel.SetActive(false);
 
         if (goMainBtn != null)
         {
@@ -39,12 +42,36 @@ public class SettingScript : MonoBehaviour
         {
             ToggleSettings();
         }
+
+        if (Input.GetKeyUp(KeyCode.B))
+        {
+            ToggleInven();
+        }
     }
 
     public void ToggleSettings()
     {
         bool isActive = !settingsPanel.activeSelf;
         settingsPanel.SetActive(isActive);
+
+        if (isActive)
+        {
+            Time.timeScale = 0f;
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
+
+    public void ToggleInven()
+    {
+        bool isActive = !InventoryPanel.activeSelf;
+        InventoryPanel.SetActive(isActive);
 
         if (isActive)
         {
