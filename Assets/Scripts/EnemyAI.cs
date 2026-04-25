@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
-using NeoFPS;  // ← 추가
+using NeoFPS;  
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Animator))]
@@ -67,7 +67,6 @@ public class EnemyAI : MonoBehaviour
         hp = maxHp;
     }
 
-    // Start의 1회 검색 제거. Update에서 폴링으로 대체.
     void TryAcquireTarget()
     {
         if (target != null) return;
@@ -82,7 +81,6 @@ public class EnemyAI : MonoBehaviour
     {
         if (state == State.Dead) return;
 
-        // 플레이어가 아직 없으면 주기적 재탐색
         if (target == null)
         {
             TryAcquireTarget();
@@ -127,7 +125,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // Animator가 본을 계산한 뒤에 상체를 플레이어 쪽으로 보정
     void LateUpdate()
     {
         if (state != State.Attack || aimBone == null || target == null) return;
@@ -142,7 +139,6 @@ public class EnemyAI : MonoBehaviour
         aimBone.rotation = Quaternion.Slerp(aimBone.rotation, lookRot, aimBoneWeight);
     }
 
-    // IK 처리 — Animator Controller의 Layer에 'IK Pass' 체크 필수
     void OnAnimatorIK(int layerIndex)
     {
         if (anim == null) return;
@@ -179,8 +175,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // NeoFPS IDamageHandler 직접 사용. 리플렉션 제거.
-    // RaycastHit을 같이 넘겨서 헤드샷 디텍트/데미지 마커가 정상 동작.
     void DealDamage(RaycastHit hit)
     {
         var damageHandler = hit.collider.GetComponentInParent<IDamageHandler>();
@@ -190,7 +184,6 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        // NeoFPS 외부 오브젝트(자체 적 등) 호환용 fallback
         hit.collider.SendMessageUpwards("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
     }
 
