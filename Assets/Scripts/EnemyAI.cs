@@ -18,6 +18,12 @@ public class EnemyAI : MonoBehaviour
     [Tooltip("본의 로컬 'forward'가 실제로 가리키는 방향 보정 (Euler 각도)")]
     [SerializeField] Vector3 aimBoneLocalForwardFix = new Vector3(0f, 0f, 0f);
 
+    [Header("Hand IK")]
+    [Tooltip("왼손이 고정될 위치 (무기의 앞쪽 그립)")]
+    [SerializeField] Transform leftHandGrip;
+    [Tooltip("왼손 IK 세기 (0 = 꺼짐, 1 = 완전히 그립 위치)")]
+    [Range(0f, 1f)][SerializeField] float leftHandIKWeight = 1f;
+
     [Header("Detection")]
     [SerializeField] float detectRange = 20f;
     [SerializeField] float attackRange = 10f;
@@ -113,13 +119,27 @@ public class EnemyAI : MonoBehaviour
         Vector3 dir = aimPoint - aimBone.position;
         if (dir.sqrMagnitude < 0.01f) return;
 
-        // 월드 공간에서 목표 방향을 바라보는 회전
         Quaternion lookRot = Quaternion.LookRotation(dir, Vector3.up);
-        // 본의 축이 실제 forward와 다를 경우 보정
         lookRot *= Quaternion.Euler(aimBoneLocalForwardFix);
 
         aimBone.rotation = Quaternion.Slerp(aimBone.rotation, lookRot, aimBoneWeight);
     }
+
+    // IK 처리 — Animator Controller의 Layer에 'IK Pass' 체크 필수
+    void OnAnimatorIK(int layerIndex)
+{
+    if (anim == null) return;
+    if (state == State.Dead) return;
+    if (leftHandGrip == null) return;
+
+    float weight = (state == State.Attack) ? leftHandIKWeight : 0f;
+
+    // 왼손을 그립 위치/회전으로
+    anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, weight);
+    anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, weight);
+    anim.SetIKPosition(AvatarIKGoal.LeftHand, leftHandGrip.position);
+    anim.SetIKRotation(AvatarIKGoal.LeftHand, leftHandGrip.rotation);
+}
 
     void FaceDirection(Vector3 dir)
     {
