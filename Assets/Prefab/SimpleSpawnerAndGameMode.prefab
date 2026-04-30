@@ -67,7 +67,7 @@ PrefabInstance:
     - target: {fileID: 114913173203684168, guid: 0486aeb450a3baf42957763257d19131, type: 3}
       propertyPath: m_StartingLoadout
       value: 
-      objectReference: {fileID: 11400000, guid: 16706c6c06a582b4cab7b1e704860398, type: 2}
+      objectReference: {fileID: 11400000, guid: 8e63b421214ddfd4eac63538851adbc5, type: 2}
     - target: {fileID: 114913173203684168, guid: 0486aeb450a3baf42957763257d19131, type: 3}
       propertyPath: m_ReplaceStartingItems
       value: 1
