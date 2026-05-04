@@ -478,8 +478,9 @@ MonoBehaviour:
   m_AutoSwitchStyle: 0
   m_BackupItem: {fileID: 0}
   m_StartingItems:
-  - {fileID: 114629206448661886, guid: ea43aa8e2528bf94faab503aa13dc878, type: 3}
-  - {fileID: 114030008102765136, guid: 9319a027e0579894fbd73a9f0f26a5da, type: 3}
+  - {fileID: 114608035731547962, guid: 75f02fe55af503a409b227a1a3100ac6, type: 3}
+  - {fileID: 114993768949958432, guid: 7908272381f7f1445945ed9b3919d311, type: 3}
+  - {fileID: 114253332771105792, guid: d9c31c175e8f0c0499b7a8699e225a98, type: 3}
   m_DuplicateBehaviour: 0
   m_SwapAction: 0
   m_GroupSizes: 010000000100000001000000
