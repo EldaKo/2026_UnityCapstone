@@ -26,9 +26,9 @@ public class EnemyAI : MonoBehaviour
     [Range(0f, 1f)][SerializeField] float leftHandIKWeight = 1f;
 
     [Header("Detection")]
-    [SerializeField] float detectRange = 20f;
-    [SerializeField] float attackRange = 10f;
-    [SerializeField] float loseTargetRange = 25f;
+    [SerializeField] float detectRange = 30f;
+    [SerializeField] float attackRange = 25f;
+    [SerializeField] float loseTargetRange = 40f;
 
     [Header("Vision")]
     [Tooltip("시야각 (도). 360 = 전방위, 120 = 정면 시야")]
@@ -325,22 +325,34 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Fire()
+{
+    if (muzzle == null || target == null) return;
+
+    Vector3 aimPoint = target.position + Vector3.up * aimHeightOffset;
+    Vector3 dir = (aimPoint - muzzle.position).normalized;
+
+    // 시각효과 (머즐 플래시 + 총알)
+    SpawnMuzzleFlash();
+    SpawnBullet(muzzle.position, dir);
+
+    // RaycastAll로 모든 hit을 받아서 자기 자신 제외
+    var hits = Physics.RaycastAll(muzzle.position, dir, 100f, shootLayerMask, QueryTriggerInteraction.Ignore);
+    if (hits.Length == 0) return;
+
+    // 거리순 정렬 (가까운 것부터)
+    System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+    // 자기 자신(또는 자식) 무시하고 첫 유효 hit 찾기
+    foreach (var hit in hits)
     {
-        if (muzzle == null || target == null) return;
+        if (hit.collider.transform == transform) continue;
+        if (hit.collider.transform.IsChildOf(transform)) continue;
 
-        Vector3 aimPoint = target.position + Vector3.up * aimHeightOffset;
-        Vector3 dir = (aimPoint - muzzle.position).normalized;
-
-        // 시각효과 (머즐 플래시 + 총알)
-        SpawnMuzzleFlash();
-        SpawnBullet(muzzle.position, dir);
-
-        // 데미지는 즉시 Raycast로 처리
-        if (Physics.Raycast(muzzle.position, dir, out RaycastHit hit, 100f, shootLayerMask))
-        {
-            DealDamage(hit);
-        }
+        // 첫 유효 hit에 데미지 적용 후 종료
+        DealDamage(hit);
+        return;
     }
+}
 
     void SpawnMuzzleFlash()
     {

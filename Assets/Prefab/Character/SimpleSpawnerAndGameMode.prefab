@@ -57,6 +57,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114913173203684168, guid: 0486aeb450a3baf42957763257d19131, type: 3}
+      propertyPath: m_PlayerPrefab
+      value: 
+      objectReference: {fileID: 114330862915175946, guid: eec7ace58b921484ba4d494eba85732e, type: 3}
+    - target: {fileID: 114913173203684168, guid: 0486aeb450a3baf42957763257d19131, type: 3}
       propertyPath: m_SpawnOnStart
       value: 1
       objectReference: {fileID: 0}
@@ -67,7 +71,7 @@ PrefabInstance:
     - target: {fileID: 114913173203684168, guid: 0486aeb450a3baf42957763257d19131, type: 3}
       propertyPath: m_StartingLoadout
       value: 
-      objectReference: {fileID: 11400000, guid: 8e63b421214ddfd4eac63538851adbc5, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 114913173203684168, guid: 0486aeb450a3baf42957763257d19131, type: 3}
       propertyPath: m_ReplaceStartingItems
       value: 1
