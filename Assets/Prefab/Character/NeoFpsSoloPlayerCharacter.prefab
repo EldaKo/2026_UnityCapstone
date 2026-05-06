@@ -845,6 +845,7 @@ GameObject:
   - component: {fileID: 6382392169032032737}
   - component: {fileID: 959475424310178059}
   - component: {fileID: 1807892844513552030}
+  - component: {fileID: 7599803756189974623}
   m_Layer: 14
   m_Name: PlayerCameraSpring
   m_TagString: MainCamera
@@ -1273,6 +1274,20 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &7599803756189974623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000013759886196}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f3872d4bf4f9c944951f11ea42e019a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
+  interactRange: 3
+  mainCamera: {fileID: 20978101300941664}
 --- !u!1 &1000014026923868
 GameObject:
   m_ObjectHideFlags: 0
