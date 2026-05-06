@@ -26,9 +26,9 @@ public class EnemyAI : MonoBehaviour
     [Range(0f, 1f)][SerializeField] float leftHandIKWeight = 1f;
 
     [Header("Detection")]
-    [SerializeField] float detectRange = 20f;
-    [SerializeField] float attackRange = 10f;
-    [SerializeField] float loseTargetRange = 25f;
+    [SerializeField] float detectRange = 30f;
+    [SerializeField] float attackRange = 25f;
+    [SerializeField] float loseTargetRange = 40f;
 
     [Header("Vision")]
     [Tooltip("시야각 (도). 360 = 전방위, 120 = 정면 시야")]
@@ -46,6 +46,12 @@ public class EnemyAI : MonoBehaviour
     [Tooltip("마지막 본 위치 도달 판정 거리 (m)")]
     [SerializeField] float lastSeenReachThreshold = 1.5f;
 
+    [Header("Combat Awareness")]
+    [Tooltip("데미지를 받으면 시야와 무관하게 추적 모드로 전환되는 시간 (초)")]
+    [SerializeField] float alertedDuration = 10f;
+    [Tooltip("같은 적을 한 번 더 맞췄을 때 알림 시간 갱신 여부")]
+    [SerializeField] bool refreshAlertOnHit = true;
+
     [Header("Movement")]
     [SerializeField] float moveSpeed = 3.5f;
     [SerializeField] float turnSpeed = 8f;
@@ -56,6 +62,12 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] float maxHp = 100f;
     [SerializeField] LayerMask shootLayerMask = ~0;
     [SerializeField] float aimHeightOffset = 1.0f;
+    [Tooltip("헤드를 노릴 때의 조준 높이 (캐릭터 발 기준 머리 위치)")]
+    [SerializeField] float headAimHeightOffset = 1.7f;
+    [Tooltip("헤드를 노릴 확률 (0 = 항상 몸통, 1 = 항상 헤드)")]
+    [Range(0f, 1f)][SerializeField] float headshotChance = 0.2f;
+    [Tooltip("헤드/몸통 선택을 갱신하는 주기 (초). 너무 짧으면 매 발사마다 흔들림")]
+    [SerializeField] float aimTargetUpdateInterval = 1.5f;
 
     [Header("Visual Effects")]
     [Tooltip("총구 화염 프리팹 (사격 시 muzzle 위치에 생성)")]
@@ -90,6 +102,14 @@ public class EnemyAI : MonoBehaviour
     float searchRotationDir = 1f;
     float searchRotationFlipTimer;
 
+    // 알림 상태
+    float alertedUntil = 0f;
+    bool IsAlerted => Time.time < alertedUntil;
+
+    // 헤드샷 조준 상태
+    bool aimingHead = false;
+    float lastAimTargetUpdate = -999f;
+
     static readonly int HashSpeed = Animator.StringToHash("Speed");
     static readonly int HashIsShooting = Animator.StringToHash("IsShooting");
     static readonly int HashDie = Animator.StringToHash("Die");
@@ -107,6 +127,7 @@ public class EnemyAI : MonoBehaviour
         if (healthManager != null)
         {
             healthManager.onIsAliveChanged += OnAliveChanged;
+            healthManager.onHealthChanged += OnHealthChanged;
         }
     }
 
@@ -115,6 +136,7 @@ public class EnemyAI : MonoBehaviour
         if (healthManager != null)
         {
             healthManager.onIsAliveChanged -= OnAliveChanged;
+            healthManager.onHealthChanged -= OnHealthChanged;
         }
     }
 
@@ -124,6 +146,73 @@ public class EnemyAI : MonoBehaviour
         {
             Die();
         }
+    }
+
+    /// <summary>
+    /// BasicHealthManager가 데미지를 받았을 때 자동 호출.
+    /// 시야와 무관하게 플레이어 위치를 향해 추적 모드 진입.
+    /// </summary>
+    void OnHealthChanged(float from, float to, bool critical, IDamageSource source)
+    {
+        if (state == State.Dead) return;
+
+        // 회복은 무시 (체력이 줄어든 경우만 알림)
+        if (to >= from) return;
+
+        // 이미 알림 상태일 때 갱신할지 여부
+        if (IsAlerted && !refreshAlertOnHit) return;
+
+        // 알림 시간 갱신
+        alertedUntil = Time.time + alertedDuration;
+
+        // 아직 target 없으면 즉시 acquire
+        if (target == null)
+        {
+            var playerGo = GameObject.FindGameObjectWithTag("Player");
+            if (playerGo != null) target = playerGo.transform;
+        }
+
+        if (target == null) return;
+
+        // 마지막 본 위치를 현재 플레이어 위치로 강제 갱신
+        // (시야 안 보여도 어디서 쐈는지는 알 수 있다는 가정)
+        lastKnownPosition = target.position;
+
+        // 상태에 따라 적절히 전환
+        switch (state)
+        {
+            case State.Idle:
+                // 안 보이고 있다가 갑자기 맞음 → Search로 진입 (마지막 본 위치 = 플레이어 현재 위치)
+                EnterSearch();
+                break;
+
+            case State.Search:
+                // Search 중에 또 맞음 → 타이머 리셋, 위치 갱신
+                searchTimer = 0f;
+                break;
+
+            // Chase, Attack 상태에선 이미 추적 중이라 추가 처리 불필요
+            // (하지만 알림 시간은 갱신됨 → loseTargetRange 무시됨)
+        }
+    }
+
+    /// <summary>
+    /// 일정 주기로 헤드/몸통 노림을 갱신.
+    /// </summary>
+    void UpdateAimTarget()
+    {
+        if (Time.time < lastAimTargetUpdate + aimTargetUpdateInterval) return;
+
+        lastAimTargetUpdate = Time.time;
+        aimingHead = (Random.value < headshotChance);
+    }
+
+    /// <summary>
+    /// 현재 노릴 부위의 조준 높이 반환 (헤드/몸통).
+    /// </summary>
+    float GetCurrentAimHeight()
+    {
+        return aimingHead ? headAimHeightOffset : aimHeightOffset;
     }
 
     void Start()
@@ -170,7 +259,8 @@ public class EnemyAI : MonoBehaviour
                 }
 
                 if (dist < attackRange) state = State.Attack;
-                else if (dist > loseTargetRange) state = State.Idle;
+                // 알림 상태일 땐 lose 안 함
+                else if (dist > loseTargetRange && !IsAlerted) state = State.Idle;
                 break;
 
             case State.Attack:
@@ -292,7 +382,8 @@ public class EnemyAI : MonoBehaviour
     {
         if (state != State.Attack || aimBone == null || target == null) return;
 
-        Vector3 aimPoint = target.position + Vector3.up * aimHeightOffset;
+        // 헤드/몸통 노림과 같은 부위로 상체도 조준
+        Vector3 aimPoint = target.position + Vector3.up * GetCurrentAimHeight();
         Vector3 dir = aimPoint - aimBone.position;
         if (dir.sqrMagnitude < 0.01f) return;
 
@@ -328,17 +419,32 @@ public class EnemyAI : MonoBehaviour
     {
         if (muzzle == null || target == null) return;
 
-        Vector3 aimPoint = target.position + Vector3.up * aimHeightOffset;
+        // 헤드/몸통 노림 갱신 (aimTargetUpdateInterval 주기)
+        UpdateAimTarget();
+
+        Vector3 aimPoint = target.position + Vector3.up * GetCurrentAimHeight();
         Vector3 dir = (aimPoint - muzzle.position).normalized;
 
         // 시각효과 (머즐 플래시 + 총알)
         SpawnMuzzleFlash();
         SpawnBullet(muzzle.position, dir);
 
-        // 데미지는 즉시 Raycast로 처리
-        if (Physics.Raycast(muzzle.position, dir, out RaycastHit hit, 100f, shootLayerMask))
+        // RaycastAll로 모든 hit을 받아서 자기 자신 제외
+        var hits = Physics.RaycastAll(muzzle.position, dir, 100f, shootLayerMask, QueryTriggerInteraction.Ignore);
+        if (hits.Length == 0) return;
+
+        // 거리순 정렬 (가까운 것부터)
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        // 자기 자신(또는 자식) 무시하고 첫 유효 hit 찾기
+        foreach (var hit in hits)
         {
+            if (hit.collider.transform == transform) continue;
+            if (hit.collider.transform.IsChildOf(transform)) continue;
+
+            // 첫 유효 hit에 데미지 적용 후 종료
             DealDamage(hit);
+            return;
         }
     }
 

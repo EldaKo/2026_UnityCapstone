@@ -174,13 +174,13 @@ MonoBehaviour:
   maxHp: 100
   shootLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 8192
   aimHeightOffset: 1
   muzzleFlashPrefab: {fileID: 100006, guid: 30b4cc2728d8cec499fad63ba93785a4, type: 3}
   muzzleFlashDuration: 0.1
   bulletPrefab: {fileID: 2086261179823682334, guid: 4965b7a9ef544df48afc89e7e30db975, type: 3}
   bulletSpeed: 80
-  bulletLifetime: 1.5
+  bulletLifetime: 10
   corpseLifetime: 5
 --- !u!114 &7099227648610990168
 MonoBehaviour:
