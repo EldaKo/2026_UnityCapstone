@@ -46,17 +46,11 @@ public class EnemyAI : MonoBehaviour
     [Tooltip("마지막 본 위치 도달 판정 거리 (m)")]
     [SerializeField] float lastSeenReachThreshold = 1.5f;
 
-    // ============================================================
-    // 추가 구간 시작 — 데미지 알림 (Combat Awareness)
-    // ============================================================
     [Header("Combat Awareness")]
     [Tooltip("데미지를 받으면 시야와 무관하게 추적 모드로 전환되는 시간 (초)")]
     [SerializeField] float alertedDuration = 10f;
     [Tooltip("같은 적을 한 번 더 맞췄을 때 알림 시간 갱신 여부")]
     [SerializeField] bool refreshAlertOnHit = true;
-    // ============================================================
-    // 추가 구간 끝
-    // ============================================================
 
     [Header("Movement")]
     [SerializeField] float moveSpeed = 3.5f;
@@ -68,6 +62,12 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] float maxHp = 100f;
     [SerializeField] LayerMask shootLayerMask = ~0;
     [SerializeField] float aimHeightOffset = 1.0f;
+    [Tooltip("헤드를 노릴 때의 조준 높이 (캐릭터 발 기준 머리 위치)")]
+    [SerializeField] float headAimHeightOffset = 1.7f;
+    [Tooltip("헤드를 노릴 확률 (0 = 항상 몸통, 1 = 항상 헤드)")]
+    [Range(0f, 1f)][SerializeField] float headshotChance = 0.2f;
+    [Tooltip("헤드/몸통 선택을 갱신하는 주기 (초). 너무 짧으면 매 발사마다 흔들림")]
+    [SerializeField] float aimTargetUpdateInterval = 1.5f;
 
     [Header("Visual Effects")]
     [Tooltip("총구 화염 프리팹 (사격 시 muzzle 위치에 생성)")]
@@ -102,12 +102,13 @@ public class EnemyAI : MonoBehaviour
     float searchRotationDir = 1f;
     float searchRotationFlipTimer;
 
-    // ============================================================
-    // 추가 구간 — 알림 상태
-    // ============================================================
+    // 알림 상태
     float alertedUntil = 0f;
     bool IsAlerted => Time.time < alertedUntil;
-    // ============================================================
+
+    // 헤드샷 조준 상태
+    bool aimingHead = false;
+    float lastAimTargetUpdate = -999f;
 
     static readonly int HashSpeed = Animator.StringToHash("Speed");
     static readonly int HashIsShooting = Animator.StringToHash("IsShooting");
@@ -126,9 +127,7 @@ public class EnemyAI : MonoBehaviour
         if (healthManager != null)
         {
             healthManager.onIsAliveChanged += OnAliveChanged;
-            // ====== 추가: 데미지 받을 때 알림 ======
             healthManager.onHealthChanged += OnHealthChanged;
-            // =====================================
         }
     }
 
@@ -137,9 +136,7 @@ public class EnemyAI : MonoBehaviour
         if (healthManager != null)
         {
             healthManager.onIsAliveChanged -= OnAliveChanged;
-            // ====== 추가: 구독 해제 ======
             healthManager.onHealthChanged -= OnHealthChanged;
-            // ============================
         }
     }
 
@@ -151,9 +148,6 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    // ============================================================
-    // 추가된 메서드 — 데미지 받았을 때 처리
-    // ============================================================
     /// <summary>
     /// BasicHealthManager가 데미지를 받았을 때 자동 호출.
     /// 시야와 무관하게 플레이어 위치를 향해 추적 모드 진입.
@@ -201,7 +195,25 @@ public class EnemyAI : MonoBehaviour
             // (하지만 알림 시간은 갱신됨 → loseTargetRange 무시됨)
         }
     }
-    // ============================================================
+
+    /// <summary>
+    /// 일정 주기로 헤드/몸통 노림을 갱신.
+    /// </summary>
+    void UpdateAimTarget()
+    {
+        if (Time.time < lastAimTargetUpdate + aimTargetUpdateInterval) return;
+
+        lastAimTargetUpdate = Time.time;
+        aimingHead = (Random.value < headshotChance);
+    }
+
+    /// <summary>
+    /// 현재 노릴 부위의 조준 높이 반환 (헤드/몸통).
+    /// </summary>
+    float GetCurrentAimHeight()
+    {
+        return aimingHead ? headAimHeightOffset : aimHeightOffset;
+    }
 
     void Start()
     {
@@ -247,9 +259,8 @@ public class EnemyAI : MonoBehaviour
                 }
 
                 if (dist < attackRange) state = State.Attack;
-                // ====== 변경: 알림 상태일 땐 lose 안 함 ======
+                // 알림 상태일 땐 lose 안 함
                 else if (dist > loseTargetRange && !IsAlerted) state = State.Idle;
-                // =============================================
                 break;
 
             case State.Attack:
@@ -371,7 +382,8 @@ public class EnemyAI : MonoBehaviour
     {
         if (state != State.Attack || aimBone == null || target == null) return;
 
-        Vector3 aimPoint = target.position + Vector3.up * aimHeightOffset;
+        // 헤드/몸통 노림과 같은 부위로 상체도 조준
+        Vector3 aimPoint = target.position + Vector3.up * GetCurrentAimHeight();
         Vector3 dir = aimPoint - aimBone.position;
         if (dir.sqrMagnitude < 0.01f) return;
 
@@ -407,7 +419,10 @@ public class EnemyAI : MonoBehaviour
     {
         if (muzzle == null || target == null) return;
 
-        Vector3 aimPoint = target.position + Vector3.up * aimHeightOffset;
+        // 헤드/몸통 노림 갱신 (aimTargetUpdateInterval 주기)
+        UpdateAimTarget();
+
+        Vector3 aimPoint = target.position + Vector3.up * GetCurrentAimHeight();
         Vector3 dir = (aimPoint - muzzle.position).normalized;
 
         // 시각효과 (머즐 플래시 + 총알)

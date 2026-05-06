@@ -243,11 +243,11 @@ MonoBehaviour:
   m_BodyImpactDamage: 1
   m_BodyMinForce: 25
   m_BodyFullForce: 100
-  m_BodyDamageHandler: {fileID: 114710732678254942}
+  m_BodyDamageHandler: {fileID: 3888775888681561564}
   m_HeadImpactDamage: 1
   m_HeadMinForce: 7.5
   m_HeadFullForce: 20
-  m_HeadDamageHandler: {fileID: 114743622975509260}
+  m_HeadDamageHandler: {fileID: 3192107653284052156}
   m_SoftLandings: {fileID: 11400000, guid: b1cff59a55e7b3c44890442cd5bae358, type: 2}
   m_HardLandings: {fileID: 11400000, guid: f1551af870bb1b94aa615f0b53cc8a19, type: 2}
   m_MinLandingThreshold: 0.5
@@ -906,7 +906,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 63462463
+    m_Bits: 65559615
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -1748,9 +1748,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4051697183857384}
   - component: {fileID: 135619751506549384}
-  - component: {fileID: 114743622975509260}
   - component: {fileID: 114182055264602586}
   - component: {fileID: 114864077763401110}
+  - component: {fileID: 3192107653284052156}
   m_Layer: 13
   m_Name: HeadDamageCollider
   m_TagString: Untagged
@@ -1794,21 +1794,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.2
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114743622975509260
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1288384513055100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba672449e0da655428ca4e3b031f6b65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Multiplier: 2
-  m_Critical: 1
-  m_FireGlobalHitEvent: 1
 --- !u!114 &114182055264602586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1840,6 +1825,27 @@ MonoBehaviour:
   m_KickDuration: 0.25
   m_PositionKickMultiplier: 0.005
   m_RotationKickMaxAngle: 15
+--- !u!114 &3192107653284052156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1288384513055100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab21951efcf38ce4d83d6510c34a09d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NeoFPS::NeoFPS.ArmouredDamageHandler
+  m_Multiplier: 2
+  m_Critical: 1
+  m_FireGlobalHitEvent: 1
+  m_InventoryKey:
+    m_Value: 0
+  m_InventoryID: 157789892
+  m_DamageMitigation: 1
+  m_ArmourDamageMultiplier: 0.5
+  m_ArmourDamageFilter: 255
 --- !u!1 &1291339746101142
 GameObject:
   m_ObjectHideFlags: 0
@@ -2199,9 +2205,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4724244053790452}
   - component: {fileID: 136675314043399218}
-  - component: {fileID: 114710732678254942}
   - component: {fileID: 114071177616420804}
   - component: {fileID: 114494700223802258}
+  - component: {fileID: 3888775888681561564}
   m_Layer: 13
   m_Name: UpperBodyDamageCollider
   m_TagString: Untagged
@@ -2247,21 +2253,6 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &114710732678254942
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1695833676836804}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba672449e0da655428ca4e3b031f6b65, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Multiplier: 1
-  m_Critical: 0
-  m_FireGlobalHitEvent: 1
 --- !u!114 &114071177616420804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2290,6 +2281,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ForceMultiplier: 5
   m_MaxForce: 2000
+--- !u!114 &3888775888681561564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1695833676836804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab21951efcf38ce4d83d6510c34a09d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NeoFPS::NeoFPS.ArmouredDamageHandler
+  m_Multiplier: 1
+  m_Critical: 0
+  m_FireGlobalHitEvent: 1
+  m_InventoryKey:
+    m_Value: 0
+  m_InventoryID: 353087605
+  m_DamageMitigation: 1
+  m_ArmourDamageMultiplier: 0.3
+  m_ArmourDamageFilter: 255
 --- !u!1 &1853179909635880
 GameObject:
   m_ObjectHideFlags: 0
