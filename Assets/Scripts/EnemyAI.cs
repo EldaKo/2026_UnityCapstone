@@ -46,6 +46,18 @@ public class EnemyAI : MonoBehaviour
     [Tooltip("마지막 본 위치 도달 판정 거리 (m)")]
     [SerializeField] float lastSeenReachThreshold = 1.5f;
 
+    // ============================================================
+    // 추가 구간 시작 — 데미지 알림 (Combat Awareness)
+    // ============================================================
+    [Header("Combat Awareness")]
+    [Tooltip("데미지를 받으면 시야와 무관하게 추적 모드로 전환되는 시간 (초)")]
+    [SerializeField] float alertedDuration = 10f;
+    [Tooltip("같은 적을 한 번 더 맞췄을 때 알림 시간 갱신 여부")]
+    [SerializeField] bool refreshAlertOnHit = true;
+    // ============================================================
+    // 추가 구간 끝
+    // ============================================================
+
     [Header("Movement")]
     [SerializeField] float moveSpeed = 3.5f;
     [SerializeField] float turnSpeed = 8f;
@@ -90,6 +102,13 @@ public class EnemyAI : MonoBehaviour
     float searchRotationDir = 1f;
     float searchRotationFlipTimer;
 
+    // ============================================================
+    // 추가 구간 — 알림 상태
+    // ============================================================
+    float alertedUntil = 0f;
+    bool IsAlerted => Time.time < alertedUntil;
+    // ============================================================
+
     static readonly int HashSpeed = Animator.StringToHash("Speed");
     static readonly int HashIsShooting = Animator.StringToHash("IsShooting");
     static readonly int HashDie = Animator.StringToHash("Die");
@@ -107,6 +126,9 @@ public class EnemyAI : MonoBehaviour
         if (healthManager != null)
         {
             healthManager.onIsAliveChanged += OnAliveChanged;
+            // ====== 추가: 데미지 받을 때 알림 ======
+            healthManager.onHealthChanged += OnHealthChanged;
+            // =====================================
         }
     }
 
@@ -115,6 +137,9 @@ public class EnemyAI : MonoBehaviour
         if (healthManager != null)
         {
             healthManager.onIsAliveChanged -= OnAliveChanged;
+            // ====== 추가: 구독 해제 ======
+            healthManager.onHealthChanged -= OnHealthChanged;
+            // ============================
         }
     }
 
@@ -125,6 +150,58 @@ public class EnemyAI : MonoBehaviour
             Die();
         }
     }
+
+    // ============================================================
+    // 추가된 메서드 — 데미지 받았을 때 처리
+    // ============================================================
+    /// <summary>
+    /// BasicHealthManager가 데미지를 받았을 때 자동 호출.
+    /// 시야와 무관하게 플레이어 위치를 향해 추적 모드 진입.
+    /// </summary>
+    void OnHealthChanged(float from, float to, bool critical, IDamageSource source)
+    {
+        if (state == State.Dead) return;
+
+        // 회복은 무시 (체력이 줄어든 경우만 알림)
+        if (to >= from) return;
+
+        // 이미 알림 상태일 때 갱신할지 여부
+        if (IsAlerted && !refreshAlertOnHit) return;
+
+        // 알림 시간 갱신
+        alertedUntil = Time.time + alertedDuration;
+
+        // 아직 target 없으면 즉시 acquire
+        if (target == null)
+        {
+            var playerGo = GameObject.FindGameObjectWithTag("Player");
+            if (playerGo != null) target = playerGo.transform;
+        }
+
+        if (target == null) return;
+
+        // 마지막 본 위치를 현재 플레이어 위치로 강제 갱신
+        // (시야 안 보여도 어디서 쐈는지는 알 수 있다는 가정)
+        lastKnownPosition = target.position;
+
+        // 상태에 따라 적절히 전환
+        switch (state)
+        {
+            case State.Idle:
+                // 안 보이고 있다가 갑자기 맞음 → Search로 진입 (마지막 본 위치 = 플레이어 현재 위치)
+                EnterSearch();
+                break;
+
+            case State.Search:
+                // Search 중에 또 맞음 → 타이머 리셋, 위치 갱신
+                searchTimer = 0f;
+                break;
+
+            // Chase, Attack 상태에선 이미 추적 중이라 추가 처리 불필요
+            // (하지만 알림 시간은 갱신됨 → loseTargetRange 무시됨)
+        }
+    }
+    // ============================================================
 
     void Start()
     {
@@ -170,7 +247,9 @@ public class EnemyAI : MonoBehaviour
                 }
 
                 if (dist < attackRange) state = State.Attack;
-                else if (dist > loseTargetRange) state = State.Idle;
+                // ====== 변경: 알림 상태일 땐 lose 안 함 ======
+                else if (dist > loseTargetRange && !IsAlerted) state = State.Idle;
+                // =============================================
                 break;
 
             case State.Attack:
@@ -325,34 +404,34 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Fire()
-{
-    if (muzzle == null || target == null) return;
-
-    Vector3 aimPoint = target.position + Vector3.up * aimHeightOffset;
-    Vector3 dir = (aimPoint - muzzle.position).normalized;
-
-    // 시각효과 (머즐 플래시 + 총알)
-    SpawnMuzzleFlash();
-    SpawnBullet(muzzle.position, dir);
-
-    // RaycastAll로 모든 hit을 받아서 자기 자신 제외
-    var hits = Physics.RaycastAll(muzzle.position, dir, 100f, shootLayerMask, QueryTriggerInteraction.Ignore);
-    if (hits.Length == 0) return;
-
-    // 거리순 정렬 (가까운 것부터)
-    System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
-
-    // 자기 자신(또는 자식) 무시하고 첫 유효 hit 찾기
-    foreach (var hit in hits)
     {
-        if (hit.collider.transform == transform) continue;
-        if (hit.collider.transform.IsChildOf(transform)) continue;
+        if (muzzle == null || target == null) return;
 
-        // 첫 유효 hit에 데미지 적용 후 종료
-        DealDamage(hit);
-        return;
+        Vector3 aimPoint = target.position + Vector3.up * aimHeightOffset;
+        Vector3 dir = (aimPoint - muzzle.position).normalized;
+
+        // 시각효과 (머즐 플래시 + 총알)
+        SpawnMuzzleFlash();
+        SpawnBullet(muzzle.position, dir);
+
+        // RaycastAll로 모든 hit을 받아서 자기 자신 제외
+        var hits = Physics.RaycastAll(muzzle.position, dir, 100f, shootLayerMask, QueryTriggerInteraction.Ignore);
+        if (hits.Length == 0) return;
+
+        // 거리순 정렬 (가까운 것부터)
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        // 자기 자신(또는 자식) 무시하고 첫 유효 hit 찾기
+        foreach (var hit in hits)
+        {
+            if (hit.collider.transform == transform) continue;
+            if (hit.collider.transform.IsChildOf(transform)) continue;
+
+            // 첫 유효 hit에 데미지 적용 후 종료
+            DealDamage(hit);
+            return;
+        }
     }
-}
 
     void SpawnMuzzleFlash()
     {
