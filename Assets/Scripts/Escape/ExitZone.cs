@@ -1,180 +1,216 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>
-/// 출구 존. 플레이어가 들어왔을 때 모든 아이템을 모았으면 클리어,
-/// 아니면 안내 메시지를 띄운다.
-/// 동시에 진행 상황을 IMGUI로 화면에 표시한다.
-/// </summary>
 [RequireComponent(typeof(Collider))]
 public class ExitZone : MonoBehaviour
 {
-    [Header("UI")]
-    public bool showHud = true;
-    public Color hudTextColor = Color.white;
+    public float promptCooldown = 2.5f;
 
-    [Header("Cooldown")]
-    [Tooltip("부족한 상태로 들어왔을 때 메시지 재표시까지의 쿨다운(초)")]
-    public float promptCooldown = 2f;
+    [Header("열쇠 근접 알림")]
+    [Tooltip("이 거리 이내에 열쇠가 있으면 근처 알림을 표시합니다")]
+    public float keyNearbyDistance = 8f;
 
     private bool cleared;
-    private string transientMessage;
-    private float transientUntil;
-    private GUIStyle hudStyle;
-    private GUIStyle bigStyle;
-    private GUIStyle smallStyle;
+    private float nextPromptTime;
 
-    private void Awake()
+    // IMGUI 상태
+    private bool showFail;
+    private float failUntil;
+    private bool showClear;
+    private bool showKeyNearby;
+
+    private GUIStyle bigStyle;
+    private GUIStyle hudStyle;
+    private GUIStyle boxStyle;
+    private GUIStyle btnStyle;
+    private GUIStyle nearbyStyle;
+
+    private Transform playerTransform;
+
+    void Awake()
     {
-        var col = GetComponent<Collider>();
-        col.isTrigger = true;
+        GetComponent<Collider>().isTrigger = true;
     }
 
-    private void OnTriggerEnter(Collider other)
+    void Update()
     {
-        if (cleared) return;
-        if (!other.CompareTag("Player")) return;
+        if (playerTransform == null)
+        {
+            var playerObj = GameObject.FindWithTag("Player");
+            if (playerObj != null) playerTransform = playerObj.transform;
+        }
+
+        if (playerTransform != null && !EscapeItemRegistry.HasAll())
+            showKeyNearby = IsKeyNearby();
+        else
+            showKeyNearby = false;
+    }
+
+    bool IsKeyNearby()
+    {
+        string[] keyNames = { "Key_Red", "Key_Green", "Key_Blue" };
+        foreach (var keyName in keyNames)
+        {
+            var keyObj = GameObject.Find(keyName);
+            if (keyObj != null && keyObj.activeInHierarchy)
+            {
+                if (Vector3.Distance(playerTransform.position, keyObj.transform.position) <= keyNearbyDistance)
+                    return true;
+            }
+        }
+
+        foreach (var obj in FindObjectsOfType<GameObject>())
+        {
+            if (obj.activeInHierarchy && obj.name.StartsWith("Key") && !obj.name.Contains("Spawner"))
+            {
+                if (Vector3.Distance(playerTransform.position, obj.transform.position) <= keyNearbyDistance)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (cleared || !other.CompareTag("Player")) return;
 
         if (EscapeItemRegistry.HasAll())
         {
-            Clear();
+            cleared = true;
+            showClear = true;
+            StartCoroutine(FreezeAfter(1f));
         }
         else
         {
-            int got = EscapeItemRegistry.CollectedCount;
-            int need = EscapeItemRegistry.RequiredCount;
-            ShowTransient($"아이템이 부족합니다 ({got}/{need})");
+            if (Time.time < nextPromptTime) return;
+            nextPromptTime = Time.time + promptCooldown;
+            showFail = true;
+            failUntil = Time.unscaledTime + 3f;
         }
     }
 
-    private void Clear()
+    IEnumerator FreezeAfter(float t)
     {
-        cleared = true;
-        Debug.Log("[Escape] CLEAR! 맵 탈출 성공");
-        // 게임 시간 정지 (간단한 클리어 처리)
-        StartCoroutine(FreezeAfterDelay(0.5f));
-    }
-
-    private IEnumerator FreezeAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
+        yield return new WaitForSeconds(t);
         Time.timeScale = 0f;
     }
 
-    private void ShowTransient(string message)
+    void EnsureStyles()
     {
-        transientMessage = message;
-        transientUntil = Time.unscaledTime + promptCooldown;
-    }
+        if (hudStyle != null) return;
 
-    private void EnsureStyles()
-    {
-        if (hudStyle == null)
+        hudStyle = new GUIStyle(GUI.skin.label)
         {
-            hudStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = 22,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.UpperLeft,
-            };
-            hudStyle.normal.textColor = hudTextColor;
-        }
-        if (bigStyle == null)
-        {
-            bigStyle = new GUIStyle(GUI.skin.label)
-            {
-                fontSize = 60,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-            };
-            bigStyle.normal.textColor = Color.white;
-        }
-    }
-
-    private void EnsureSmallStyle()
-    {
-        if (smallStyle != null) return;
-        smallStyle = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = 14,
-            fontStyle = FontStyle.Normal,
-            alignment = TextAnchor.UpperLeft,
+            fontSize = 22,
+            fontStyle = FontStyle.Bold,
+            alignment = TextAnchor.UpperLeft
         };
-        smallStyle.normal.textColor = new Color(1f, 0.95f, 0.55f, 0.95f);
+        hudStyle.normal.textColor = Color.white;
+
+        bigStyle = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 52,
+            fontStyle = FontStyle.Bold,
+            alignment = TextAnchor.MiddleCenter
+        };
+        bigStyle.normal.textColor = Color.white;
+
+        boxStyle = new GUIStyle(GUI.skin.box)
+        {
+            fontSize = 24,
+            alignment = TextAnchor.MiddleCenter
+        };
+        boxStyle.normal.textColor = Color.white;
+
+        btnStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontSize = 20,
+            fontStyle = FontStyle.Bold
+        };
+
+        nearbyStyle = new GUIStyle(GUI.skin.box)
+        {
+            fontSize = 16,
+            alignment = TextAnchor.MiddleCenter,
+            fontStyle = FontStyle.Bold
+        };
+        nearbyStyle.normal.textColor = new Color(1f, 0.95f, 0.4f);
     }
 
-
-    private void OnGUI()
+    void OnGUI()
     {
-        if (!showHud) return;
         EnsureStyles();
 
-        int got = EscapeItemRegistry.CollectedCount;
+        int got  = EscapeItemRegistry.CollectedCount;
         int need = EscapeItemRegistry.RequiredCount;
-        string statusLine = EscapeItemRegistry.HasAll()
-            ? "아이템 " + got + "/" + need + "  ▶  출구로!"
-            : "아이템 " + got + "/" + need;
 
-        GUI.Label(new Rect(20, 20, 600, 40), statusLine, hudStyle);
+        // ── 상단 HUD
+        string hudText = EscapeItemRegistry.HasAll()
+            ? $"열쇠 {got}/{need}  ▶  출구로 가세요!"
+            : $"열쇠 {got}/{need}";
+        GUI.Label(new Rect(20, 20, 400, 36), hudText, hudStyle);
 
-        DrawProximityNotice();
+        // ── 탈출 불가 팝업
+        const float failBoxX = 20f;
+        const float failBoxY = 62f;
+        const float failBoxW = 260f;
+        const float failBoxH = 64f;
 
-        if (!string.IsNullOrEmpty(transientMessage) && Time.unscaledTime < transientUntil)
+        if (showFail && Time.unscaledTime < failUntil)
         {
-            var rect = new Rect(0, Screen.height * 0.55f, Screen.width, 50);
-            GUI.Label(rect, transientMessage, bigStyle);
-        }
+            float remaining = failUntil - Time.unscaledTime;
+            float alpha = Mathf.Clamp01(remaining / 0.6f);
 
-        if (cleared)
-        {
-            var bgRect = new Rect(0, 0, Screen.width, Screen.height);
             var prevColor = GUI.color;
-            GUI.color = new Color(0, 0, 0, 0.6f);
-            GUI.DrawTexture(bgRect, Texture2D.whiteTexture);
+            GUI.color = new Color(0, 0, 0, 0.35f * alpha);
+            GUI.DrawTexture(new Rect(failBoxX, failBoxY, failBoxW, failBoxH), Texture2D.whiteTexture);
             GUI.color = prevColor;
 
-            var rect = new Rect(0, Screen.height * 0.4f, Screen.width, 100);
-            GUI.Label(rect, "CLEAR!", bigStyle);
+            int missing = need - got;
+            var fadeBox = new GUIStyle(boxStyle) { fontSize = 16 };
+            fadeBox.normal.textColor = new Color(1f, 1f, 1f, alpha);
 
-            var subRect = new Rect(0, Screen.height * 0.5f, Screen.width, 50);
-            GUI.Label(subRect, "맵을 탈출했습니다", hudStyle.WithCenterTopAnchor());
+            GUI.Box(new Rect(failBoxX, failBoxY, failBoxW, failBoxH),
+                $"열쇠가 {missing}개 부족합니다 ({got}/{need})",
+                fadeBox);
         }
-    }
-
-    private void DrawProximityNotice()
-    {
-        var tracker = EscapeProximityTracker.Instance;
-        if (tracker == null) return;
-        var closest = tracker.ClosestItem;
-        if (closest == null) return;
-
-        if (EscapeItemRegistry.Has(closest.itemId)) return;
-
-        EnsureSmallStyle();
-
-        string label = ItemIdToLabel(closest.itemId);
-        float dist = tracker.ClosestDistance;
-        string text = "✨ 근처에 " + label + " 있음 (" + dist.ToString("F1") + "m)";
-
-        GUI.Label(new Rect(20, 55, 400, 28), text, smallStyle);
-    }
-
-    private static string ItemIdToLabel(string id)
-    {
-        switch (id)
+        else
         {
-            case "redKey":   return "빨간 열쇠가";
-            case "greenKey": return "초록 열쇠가";
-            case "blueKey":  return "파란 열쇠가";
-            default:         return "아이템이";
+            showFail = false;
+        }
+
+        // ── 열쇠 근처 알림 (실패 팝업 아래)
+        if (showKeyNearby)
+        {
+            float nearX = failBoxX;
+            float nearY = failBoxY + failBoxH + 4f;
+            float nearW = failBoxW;
+            float nearH = 40f;
+
+            var prevColor = GUI.color;
+            GUI.color = new Color(0f, 0f, 0f, 0.4f);
+            GUI.DrawTexture(new Rect(nearX, nearY, nearW, nearH), Texture2D.whiteTexture);
+            GUI.color = prevColor;
+
+            GUI.Box(new Rect(nearX, nearY, nearW, nearH), "열쇠가 근처에 있어.", nearbyStyle);
+        }
+
+        // ── 클리어 화면
+        if (showClear)
+        {
+            var prevColor = GUI.color;
+            GUI.color = new Color(0, 0, 0, 0.65f);
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+            GUI.color = prevColor;
+
+            GUI.Label(new Rect(0, Screen.height * 0.38f, Screen.width, 80),
+                "ESCAPE  CLEAR!", bigStyle);
+
+            var subStyle = new GUIStyle(bigStyle) { fontSize = 22 };
+            GUI.Label(new Rect(0, Screen.height * 0.52f, Screen.width, 40),
+                "열쇠 3개를 모두 모아 탈출에 성공했습니다!", subStyle);
         }
     }
 }
 
-internal static class GUIStyleExtensions
-{
-    public static GUIStyle WithCenterTopAnchor(this GUIStyle s)
-    {
-        return new GUIStyle(s) { alignment = TextAnchor.UpperCenter };
-    }
-}

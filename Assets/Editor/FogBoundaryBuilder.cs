@@ -24,15 +24,16 @@ public static class FogBoundaryBuilder
     private const float FogStartDistance = 25f;
     private const float FogEndDistance = 90f;
 
-    [MenuItem("Tools/Fog Boundary/Build (Auto)")]
-    public static void Build()
+public static void Build()
     {
-        // 고정 좌표 (사용자 조정 결과 - 2차 조정)
-        const float MinX = -92.3f;
-        const float MaxX = 79.0f;
-        const float MinZ = -60.0f;
-        const float MaxZ = 104.0f;
-        const float WallY = 74.2657852f;
+        // 중앙 광장 범위: X -52~+32, Z -3~+45
+        const float MinX = -52f;
+        const float MaxX = 32f;
+        const float MinZ = -3f;
+        const float MaxZ = 45f;
+        const float WallY = 2f;      // 지면 기준
+        const float wallHeight = 120f;
+        const float thickness = 30f; // 두꺼운 벽 = 안개가 더 안 뚫림
 
         var existing = GameObject.Find(BoundaryRootName);
         if (existing != null) Object.DestroyImmediate(existing);
@@ -40,8 +41,6 @@ public static class FogBoundaryBuilder
         var root = new GameObject(BoundaryRootName);
         Undo.RegisterCreatedObjectUndo(root, "Create Fog Boundary");
 
-        float wallHeight = 200f;
-        float thickness = WallThickness;
         float xLength = (MaxX - MinX) + thickness * 2f;
         float zLength = (MaxZ - MinZ) + thickness * 2f;
         float centerZ = (MinZ + MaxZ) * 0.5f;
@@ -60,24 +59,25 @@ public static class FogBoundaryBuilder
             new Vector3(centerX, WallY, MaxZ + thickness * 0.5f),
             new Vector3(xLength, wallHeight, thickness));
 
+        // 안개 설정 - 엄청 빽빽하게
         RenderSettings.fog = true;
         RenderSettings.fogMode = FogMode.Linear;
-        RenderSettings.fogColor = FogColor;
-        RenderSettings.fogStartDistance = FogStartDistance;
-        RenderSettings.fogEndDistance = FogEndDistance;
+        RenderSettings.fogColor = new Color(0.12f, 0.12f, 0.14f, 1f); // 거의 검정
+        RenderSettings.fogStartDistance = 20f;  // 20m 부터 시작
+        RenderSettings.fogEndDistance   = 38f;  // 38m 에서 완전 불투명
 
         var mainCam = Camera.main;
         if (mainCam != null)
         {
             Undo.RecordObject(mainCam, "Set Camera Background");
             mainCam.clearFlags = CameraClearFlags.SolidColor;
-            mainCam.backgroundColor = FogColor;
+            mainCam.backgroundColor = new Color(0.12f, 0.12f, 0.14f, 1f);
         }
 
         EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
         Selection.activeGameObject = root;
 
-        Debug.Log("[FogBoundary] 고정 좌표 배치 완료: X=[" + MinX.ToString("F2") + ", " + MaxX.ToString("F2") + "], Z=[" + MinZ.ToString("F2") + ", " + MaxZ.ToString("F2") + "]");
+        Debug.Log("[FogBoundary] 중앙광장 안개 배치 완료");
     }
 
     [MenuItem("Tools/Fog Boundary/Remove")]

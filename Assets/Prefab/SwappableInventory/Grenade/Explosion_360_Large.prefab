@@ -38890,7 +38890,7 @@ MonoBehaviour:
   expandNeoComponents: 0
   expandOtherComponents: 0
   expandNestedObjectList: 0
-  prefabGuid: bb2578b9c476bb243afbc27af3a0cfb4
+  prefabGuid: 6bea9e973aac3704484846e5251c132e
   m_MoveToLocalScene: 0
   m_SaveName: 0
   m_Position: 0
@@ -38902,7 +38902,7 @@ MonoBehaviour:
   m_NeoComponents: []
   m_OtherComponents: []
   m_Overrides: []
-  m_PrefabStrongID: -1026322277
+  m_PrefabStrongID: -802052890
   m_IsPrefabRoot: 1
   m_NestedObjects:
     m_Keys: 

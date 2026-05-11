@@ -2,12 +2,10 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-public class IntroManager : MonoBehaviour
+public class TutorialScripts : MonoBehaviour
 {
     [Header("OBJ setting")]
     public GameObject targetObject;
-
-
     public TextMeshProUGUI subtitleText;
     public float typingSpeed = 0.05f;
 
@@ -34,18 +32,15 @@ public class IntroManager : MonoBehaviour
         StartCoroutine(MoveSequence());
     }
 
-
     public void StartGunSequence()
     {
         StopAllCoroutines();
         StartCoroutine(GunSequence());
     }
 
-   
     IEnumerator MoveSequence()
     {
         yield return StartCoroutine(TypeText("잘했습니다. 이제 F키를 눌러 눈 앞의 총기를 주워봅시다."));
-
     }
 
     IEnumerator GunSequence()
@@ -54,16 +49,13 @@ public class IntroManager : MonoBehaviour
             targetObject.SetActive(true);
 
         yield return StartCoroutine(TypeText("총기를 획득했습니다. 좌클릭으로 발사할 수 있습니다."));
-
         yield return new WaitForSeconds(2f);
-
         yield return StartCoroutine(TypeText("이제 반짝이는 과녁을 향해 총기를 발사해봅시다."));
     }
 
     IEnumerator TypeText(string message)
     {
         subtitleText.text = "";
-
         foreach (char letter in message)
         {
             subtitleText.text += letter;
