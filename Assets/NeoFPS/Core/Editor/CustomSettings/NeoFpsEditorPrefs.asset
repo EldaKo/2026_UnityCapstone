@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2054efa3ce896bf49856dae97ea4c5f2, type: 3}
   m_Name: NeoFpsEditorPrefs
   m_EditorClassIdentifier: NeoFPS::NeoFPSEditor.NeoFpsEditorPrefs
-  m_FirstRun: 1
+  m_FirstRun: 0
   m_ShowHubOnStart: 0
-  m_CurrentLayerSettingsVersion: 0
-  m_CurrentPhysicsSettingsVersion: 0
-  m_CurrentInputSettingsVersion: 0
-  m_CurrentPlayerSettingsVersion: 0
-  m_CurrentBuildSettingsVersion: 0
+  m_CurrentLayerSettingsVersion: 2
+  m_CurrentPhysicsSettingsVersion: 6
+  m_CurrentInputSettingsVersion: 2
+  m_CurrentPlayerSettingsVersion: 1
+  m_CurrentBuildSettingsVersion: 7
   m_CurrentNeoFPSVersion: 0
-  m_Unity6Checked: 0
-  m_RenderPipeline: 0
+  m_Unity6Checked: 1
+  m_RenderPipeline: 2
   m_DisableNeoObjectBrowsers: 0
