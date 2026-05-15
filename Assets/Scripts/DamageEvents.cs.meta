@@ -1,8 +1,11 @@
 fileFormatVersion: 2
-guid: bb2578b9c476bb243afbc27af3a0cfb4
-NativeFormatImporter:
+guid: b0447898d58ea5441bafcde56c1bff44
+MonoImporter:
   externalObjects: {}
-  mainObjectFileID: 100100000
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
@@ -11,5 +14,5 @@ AssetOrigin:
   productId: 150179
   packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
   packageVersion: 1.1.36
-  assetPath: Assets/Prefab/SwappableInventory/Grenade/Explosion_360_Large.prefab
+  assetPath: Assets/NeoFPS/Core/Damage/DamageEvents.cs
   uploadId: 899482

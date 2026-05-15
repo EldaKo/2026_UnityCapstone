@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 55f353638544bf749bd800333839696c
+timeCreated: 1484926535
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Core/Damage/IHealthManager.cs
+  uploadId: 899482

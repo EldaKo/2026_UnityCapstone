@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 8c1483a60c48b7f4b92b63c74b5e6311
+timeCreated: 1484228827
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 150179
+  packageName: 'NeoFPS: FPS Controller, Template & Toolkit'
+  packageVersion: 1.1.36
+  assetPath: Assets/NeoFPS/Core/Damage/BasicDamageHandler.cs
+  uploadId: 899482

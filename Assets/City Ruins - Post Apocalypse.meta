@@ -1,4 +1,5 @@
 fileFormatVersion: 2
+<<<<<<< Updated upstream:Assets/City Ruins - Post Apocalypse.meta
 guid: bc16017312e82464c89d56d07fd1eaa3
 folderAsset: yes
 DefaultImporter:
@@ -6,3 +7,7 @@ DefaultImporter:
   userData: 
   assetBundleName: 
   assetBundleVariant: 
+=======
+guid: f44817fb8d94fc046899d1152927d6d5
+
+>>>>>>> Stashed changes:Assets/Scripts/Escape.meta
