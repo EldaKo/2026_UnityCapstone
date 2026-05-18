@@ -93,8 +93,13 @@ public class HideoutUIManager : MonoBehaviour
 
     public void EnterRaid()
     {
+        // 저장된 stash 상태는 현재 인벤토리 그대로
         SaveManager.Save(SaveManager.CaptureCurrentState());
         EscapeItemRegistry.Reset();
+
+        // 익스트랙션 룰: 레이드는 빈손으로 시작
+        if (Inventory.HasInstance) Inventory.Instance.ClearAll();
+
         SceneManager.LoadScene(raidSceneName);
     }
 

@@ -6,8 +6,11 @@ using System.Reflection;
 
 public class NeoFPSUpgradeApplier : MonoBehaviour
 {
-    [Tooltip("방어구 시설 레벨별 내구도. index = 레벨. 헬멧/바디 동일하게 적용. 레벨 3 이상은 마지막 값 사용")]
-    public int[] armorDurabilityByLevel = new int[] { 0, 25, 35, 55 };
+    [Tooltip("방어구 시설 레벨별 최대 내구도. index = 레벨. 헬멧/바디 동일하게 적용. 레벨 3 이상은 마지막 값 사용")]
+    public int[] armorDurabilityByLevel = new int[] { 0, 10, 20, 30 };
+
+    [Tooltip("씬 시작 시 InteractivePickup_Armour* 픽업을 자동 수령해서 항상 착용 상태로 만듦")]
+    public bool autoEquipArmorAtStart = true;
 
     void Start()
     {
@@ -16,11 +19,38 @@ public class NeoFPSUpgradeApplier : MonoBehaviour
 
     private IEnumerator ApplyUpgradesRoutine()
     {
-        if (PlayerUpgradeManager.Instance == null) yield break;
         yield return new WaitForSeconds(0.5f);
+
+        if (autoEquipArmorAtStart) AutoEquipArmorPickups();
+
+        if (PlayerUpgradeManager.Instance == null) yield break;
 
         ApplyArmorUpgrade();
         ApplyWeaponUpgrade();
+    }
+
+    private void AutoEquipArmorPickups()
+    {
+        ICharacter character = GetComponent<ICharacter>() ?? GetComponentInParent<ICharacter>();
+        if (character == null)
+        {
+            // 마지막 폴백: 씬에서 캐릭터 검색
+            foreach (var c in FindObjectsOfType<MonoBehaviour>())
+            {
+                if (c is ICharacter ic) { character = ic; break; }
+            }
+        }
+        if (character == null) { Debug.LogWarning("[NeoFPS] AutoEquip: ICharacter 없음"); return; }
+
+        foreach (var pickup in FindObjectsOfType<InteractivePickup>())
+        {
+            if (pickup == null) continue;
+            string n = pickup.gameObject.name;
+            if (!n.Contains("Armour") && !n.Contains("Armor")) continue;
+
+            pickup.Interact(character);
+            Debug.Log($"[NeoFPS] AutoEquip: {n}");
+        }
     }
 
     private void ApplyArmorUpgrade()
