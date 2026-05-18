@@ -99,8 +99,12 @@ public class NeoFPSUpgradeApplier : MonoBehaviour
             return;
         }
 
+        // 최대치를 레벨 내구도로 변경 → HUD 표시가 "현재/레벨" 형식이 됨
+        var maxField = item.GetType().GetField("m_MaxQuantity", BindingFlags.NonPublic | BindingFlags.Instance);
+        if (maxField != null) maxField.SetValue(item, durability);
+
         item.quantity = durability;
-        Debug.Log($"[NeoFPS] {armor.name} 내구도={durability} (Lv{level}, invID={inventoryID})");
+        Debug.Log($"[NeoFPS] {armor.name} 내구도={durability}/{durability} (Lv{level}, invID={inventoryID})");
     }
 
     private void ApplyWeaponUpgrade()
