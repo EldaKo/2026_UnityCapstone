@@ -64,6 +64,8 @@ public class FacilityScript : MonoBehaviour
     public NeedItemSlot[] needItemSlots;
     public Button upgradeButton;
     public Button useButton;
+    [Tooltip("이 시설 패널의 뒤로가기/닫기 버튼. 누르면 패널 닫고 카메라 탑뷰 복귀")]
+    public Button closeButton;
 
     private bool _subscribed;
 
@@ -72,6 +74,7 @@ public class FacilityScript : MonoBehaviour
         if (panelRoot != null) panelRoot.SetActive(false);
         if (upgradeButton != null) upgradeButton.onClick.AddListener(OnUpgradeClicked);
         if (useButton != null) useButton.onClick.AddListener(OnUseClicked);
+        if (closeButton != null) closeButton.onClick.AddListener(OnCloseClicked);
     }
 
     void OnEnable() => TrySubscribe();
@@ -210,5 +213,11 @@ public class FacilityScript : MonoBehaviour
         if (functionUIPanel == null) return;
         if (panelRoot != null) panelRoot.SetActive(false);
         functionUIPanel.SetActive(true);
+    }
+
+    private void OnCloseClicked()
+    {
+        if (HideoutUIManager.Instance != null) HideoutUIManager.Instance.CloseAll();
+        else Close();
     }
 }

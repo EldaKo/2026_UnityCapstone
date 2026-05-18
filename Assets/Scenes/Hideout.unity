@@ -2887,7 +2887,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f49857dd4927444e87327e5a08be7e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HideoutUIManager
-  exitToMainButton: {fileID: 1446568234}
+  exitToMainButton: {fileID: 0}
 --- !u!114 &1273028440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4159,9 +4159,22 @@ MonoBehaviour:
   nameText: {fileID: 1408144867}
   descText: {fileID: 673490441}
   levelText: {fileID: 2023709858}
-  needItemSlots: []
+  needItemSlots:
+  - root: {fileID: 1356772722}
+    iconSprite: {fileID: 21300000, guid: c2a353c84f4019e4894f8add48265731, type: 3}
+    nameText: {fileID: 1619031371}
+    countText: {fileID: 608591436}
+  - root: {fileID: 899265397}
+    iconSprite: {fileID: 21300000, guid: 0874521676141ae47b8f192b34a60db2, type: 3}
+    nameText: {fileID: 413898040}
+    countText: {fileID: 1479904037}
+  - root: {fileID: 837587971}
+    iconSprite: {fileID: 21300000, guid: ef58a105eebac354da503219606bf2c8, type: 3}
+    nameText: {fileID: 1711590229}
+    countText: {fileID: 1255465636}
   upgradeButton: {fileID: 652337635}
   useButton: {fileID: 0}
+  closeButton: {fileID: 1446568234}
 --- !u!4 &1903120435
 Transform:
   m_ObjectHideFlags: 0
@@ -4195,7 +4208,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1903120433}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 2110485904}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -4715,6 +4728,19 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a535a2534860d647b5721cadc8263f1, type: 3}
+--- !u!134 &2110485904
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1001 &7563766949858998844
 PrefabInstance:
   m_ObjectHideFlags: 0
