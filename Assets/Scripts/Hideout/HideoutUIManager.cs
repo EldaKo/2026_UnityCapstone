@@ -148,6 +148,7 @@ public class HideoutUIManager : MonoBehaviour
             if (f != facility) f.Close();
         }
         facility.Open();
+        SetHubButtonsVisible(false);
     }
 
     public void CloseAll()
@@ -156,6 +157,13 @@ public class HideoutUIManager : MonoBehaviour
             f.Close();
 
         if (HideoutCamera.Instance != null) HideoutCamera.Instance.ReturnToTopView();
+        SetHubButtonsVisible(true);
+    }
+
+    private void SetHubButtonsVisible(bool visible)
+    {
+        if (saveAndExitButton != null) saveAndExitButton.gameObject.SetActive(visible);
+        if (enterRaidButton != null) enterRaidButton.gameObject.SetActive(visible);
     }
 
     public void GoToMainScreen()
