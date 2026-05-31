@@ -167,6 +167,8 @@ MonoBehaviour:
   searchDuration: 5
   searchRotationSpeed: 60
   lastSeenReachThreshold: 1.5
+  alertedDuration: 10
+  refreshAlertOnHit: 1
   moveSpeed: 3.5
   turnSpeed: 8
   fireRate: 0.7
@@ -174,14 +176,26 @@ MonoBehaviour:
   maxHp: 100
   shootLayerMask:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 24576
   aimHeightOffset: 1
+  headAimHeightOffset: 1.7
+  headshotChance: 0.2
+  aimTargetUpdateInterval: 1.5
   muzzleFlashPrefab: {fileID: 100006, guid: 30b4cc2728d8cec499fad63ba93785a4, type: 3}
   muzzleFlashDuration: 0.1
   bulletPrefab: {fileID: 2086261179823682334, guid: 4965b7a9ef544df48afc89e7e30db975, type: 3}
   bulletSpeed: 80
-  bulletLifetime: 10
+  bulletLifetime: 1.5
   corpseLifetime: 5
+  dropPrefabs:
+  - {fileID: 2904987465457662813, guid: f3bf129230ea2d24596c0250b0b56e18, type: 3}
+  - {fileID: 2285346654645457378, guid: 03868801891887147afa1740d17cb66b, type: 3}
+  - {fileID: 8037026824114383865, guid: f059f506d8c26d14a9f700b6522b0b03, type: 3}
+  - {fileID: 2387031305938062736, guid: 3a9d722196b9a3c41b6cefd6ac80f859, type: 3}
+  - {fileID: 6790612850742721889, guid: b29fcdd448f12a44f82894461a3bf1ad, type: 3}
+  - {fileID: 4386361694059629678, guid: 5e2e3e1c9bf151a408fa2ff680b63d22, type: 3}
+  dropChance: 0.5
+  dropHeightOffset: 0.5
 --- !u!114 &7099227648610990168
 MonoBehaviour:
   m_ObjectHideFlags: 0

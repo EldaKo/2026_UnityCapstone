@@ -1,21 +1,45 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class HideoutUIManager : MonoBehaviour
 {
     public static HideoutUIManager Instance;
 
+    [System.Serializable]
+    public class StageInfo
+    {
+        public string displayName = "스테이지";
+        public string sceneName = "DEMO City Ruins";
+        [Tooltip("이 스테이지를 해금하려면 클리어해야 하는 선행 스테이지의 씬 이름. 비우면 항상 해금")]
+        public string requiresClearOf = "";
+    }
+
     [Header("공통 버튼 (모든 시설 공유)")]
     public Button exitToMainButton;
     [Tooltip("게임을 저장하고 메인 화면으로 돌아감")]
     public Button saveAndExitButton;
-    [Tooltip("레이드(시티) 씬으로 입장")]
+    [Tooltip("스테이지 선택 패널을 여는 버튼")]
     public Button enterRaidButton;
 
+    [Header("스테이지 선택")]
+    [Tooltip("Enter_Raid 클릭 시 열리는 스테이지 선택 패널 (기본 비활성)")]
+    public GameObject stageSelectPanel;
+    [Tooltip("스테이지 버튼들이 생성될 부모 (예: 세로 레이아웃 그룹)")]
+    public Transform stageButtonContainer;
+    [Tooltip("복제 대상이 될 스테이지 버튼 템플릿")]
+    public Button stageButtonTemplate;
+    [Tooltip("스테이지 선택 패널 닫기 버튼")]
+    public Button stageSelectCloseButton;
+    [Tooltip("선택 가능한 스테이지 목록")]
+    public List<StageInfo> stages = new List<StageInfo>();
+
     [Header("씬 이름")]
-    public string raidSceneName = "DEMO City Ruins";
     public string mainScreenSceneName = "mainScreen";
+
+    private readonly List<GameObject> _spawnedStageButtons = new List<GameObject>();
 
     void Awake()
     {
@@ -26,7 +50,11 @@ public class HideoutUIManager : MonoBehaviour
 
         if (exitToMainButton != null) exitToMainButton.onClick.AddListener(GoToMainScreen);
         if (saveAndExitButton != null) saveAndExitButton.onClick.AddListener(SaveAndExit);
-        if (enterRaidButton != null) enterRaidButton.onClick.AddListener(EnterRaid);
+        if (enterRaidButton != null) enterRaidButton.onClick.AddListener(OpenStageSelect);
+        if (stageSelectCloseButton != null) stageSelectCloseButton.onClick.AddListener(CloseStageSelect);
+
+        if (stageButtonTemplate != null) stageButtonTemplate.gameObject.SetActive(false);
+        if (stageSelectPanel != null) stageSelectPanel.SetActive(false);
     }
 
     void Start()
@@ -40,11 +68,13 @@ public class HideoutUIManager : MonoBehaviour
         {
             // Continue / Death: 저장된 상태 복원, 현재 인벤토리는 폐기
             ApplySaveData(SaveManager.PendingLoad);
+            StageProgress.SetAll(SaveManager.PendingLoad.clearedStages);
             SaveManager.PendingLoad = null;
         }
         else if (SaveManager.SaveOnHideoutLoad)
         {
             // Raid 탈출 성공: 저장된 stash + 현재 raid loot 합쳐서 저장
+            // (StageProgress는 ExitZone에서 이미 MarkCleared됨 → 그대로 저장에 포함)
             MergeRaidLootIntoSavedStash();
             SaveManager.Save(SaveManager.CaptureCurrentState());
         }
@@ -129,7 +159,55 @@ public class HideoutUIManager : MonoBehaviour
         SceneManager.LoadScene(mainScreenSceneName);
     }
 
-    public void EnterRaid()
+    public void OpenStageSelect()
+    {
+        if (stageSelectPanel != null) stageSelectPanel.SetActive(true);
+        SetHubButtonsVisible(false);
+        RebuildStageButtons();
+    }
+
+    public void CloseStageSelect()
+    {
+        if (stageSelectPanel != null) stageSelectPanel.SetActive(false);
+        SetHubButtonsVisible(true);
+    }
+
+    private void RebuildStageButtons()
+    {
+        foreach (var go in _spawnedStageButtons)
+            if (go != null) Destroy(go);
+        _spawnedStageButtons.Clear();
+
+        if (stageButtonTemplate == null || stageButtonContainer == null) return;
+
+        foreach (var stage in stages)
+        {
+            if (stage == null) continue;
+
+            var btnObj = Instantiate(stageButtonTemplate.gameObject, stageButtonContainer);
+            btnObj.SetActive(true);
+            _spawnedStageButtons.Add(btnObj);
+
+            bool unlocked = string.IsNullOrEmpty(stage.requiresClearOf)
+                            || StageProgress.IsCleared(stage.requiresClearOf);
+
+            var label = btnObj.GetComponentInChildren<TextMeshProUGUI>();
+            if (label != null)
+                label.text = unlocked ? stage.displayName : $"{stage.displayName} (잠김)";
+
+            string sceneName = stage.sceneName;
+            var btn = btnObj.GetComponent<Button>();
+            if (btn != null)
+            {
+                btn.onClick.RemoveAllListeners();
+                btn.interactable = unlocked;
+                if (unlocked)
+                    btn.onClick.AddListener(() => EnterRaidStage(sceneName));
+            }
+        }
+    }
+
+    public void EnterRaidStage(string sceneName)
     {
         // 저장된 stash 상태는 현재 인벤토리 그대로
         SaveManager.Save(SaveManager.CaptureCurrentState());
@@ -138,7 +216,7 @@ public class HideoutUIManager : MonoBehaviour
         // 익스트랙션 룰: 레이드는 빈손으로 시작
         if (Inventory.HasInstance) Inventory.Instance.ClearAll();
 
-        SceneManager.LoadScene(raidSceneName);
+        SceneManager.LoadScene(sceneName);
     }
 
     public void OpenFacility(FacilityScript facility)
@@ -148,6 +226,7 @@ public class HideoutUIManager : MonoBehaviour
             if (f != facility) f.Close();
         }
         facility.Open();
+        if (stageSelectPanel != null) stageSelectPanel.SetActive(false);
         SetHubButtonsVisible(false);
     }
 

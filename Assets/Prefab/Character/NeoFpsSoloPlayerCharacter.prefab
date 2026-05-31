@@ -498,7 +498,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NeoFPSUpgradeApplier
   armorDurabilityByLevel: 000000000a000000140000001e000000
-  autoEquipArmorAtStart: 1
+  armorItemPrefabs:
+  - {fileID: 832707273170290738, guid: 66cac9465f371f547b6036afd25fe7c2, type: 3}
+  - {fileID: 7194302972281920374, guid: d64bb3a12b682f6438476834d0149bb9, type: 3}
 --- !u!1 &1000011745390456
 GameObject:
   m_ObjectHideFlags: 0

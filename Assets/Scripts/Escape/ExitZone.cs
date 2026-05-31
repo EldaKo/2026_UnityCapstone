@@ -104,6 +104,8 @@ public class ExitZone : MonoBehaviour
         Time.timeScale = 0f;
         yield return new WaitForSecondsRealtime(clearScreenDuration);
         Time.timeScale = 1f;
+        // 현재 스테이지(레이드 씬)를 클리어로 기록 → 다음 스테이지 해금
+        StageProgress.MarkCleared(SceneManager.GetActiveScene().name);
         SaveManager.SaveOnHideoutLoad = true;
         SceneManager.LoadScene(nextSceneName);
     }

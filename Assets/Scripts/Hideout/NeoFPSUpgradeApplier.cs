@@ -9,8 +9,8 @@ public class NeoFPSUpgradeApplier : MonoBehaviour
     [Tooltip("방어구 시설 레벨별 최대 내구도. index = 레벨. 헬멧/바디 동일하게 적용. 레벨 3 이상은 마지막 값 사용")]
     public int[] armorDurabilityByLevel = new int[] { 0, 10, 20, 30 };
 
-    [Tooltip("씬 시작 시 InteractivePickup_Armour* 픽업을 자동 수령해서 항상 착용 상태로 만듦")]
-    public bool autoEquipArmorAtStart = true;
+    [Tooltip("입장 시 자동으로 인벤토리에 추가/착용할 방어구 아이템 프리팹 (Armour_Body, Armour_Helmet 등)")]
+    public GameObject[] armorItemPrefabs;
 
     void Start()
     {
@@ -21,43 +21,38 @@ public class NeoFPSUpgradeApplier : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-        if (autoEquipArmorAtStart) AutoEquipArmorPickups();
-
         if (PlayerUpgradeManager.Instance == null) yield break;
 
-        ApplyArmorUpgrade();
+        EquipArmorByLevel();
         ApplyWeaponUpgrade();
     }
 
-    private void AutoEquipArmorPickups()
-    {
-        ICharacter character = GetComponent<ICharacter>() ?? GetComponentInParent<ICharacter>();
-        if (character == null)
-        {
-            // 마지막 폴백: 씬에서 캐릭터 검색
-            foreach (var c in FindObjectsOfType<MonoBehaviour>())
-            {
-                if (c is ICharacter ic) { character = ic; break; }
-            }
-        }
-        if (character == null) { Debug.LogWarning("[NeoFPS] AutoEquip: ICharacter 없음"); return; }
-
-        foreach (var pickup in FindObjectsOfType<InteractivePickup>())
-        {
-            if (pickup == null) continue;
-            string n = pickup.gameObject.name;
-            if (!n.Contains("Armour") && !n.Contains("Armor")) continue;
-
-            pickup.Interact(character);
-            Debug.Log($"[NeoFPS] AutoEquip: {n}");
-        }
-    }
-
-    private void ApplyArmorUpgrade()
+    private void EquipArmorByLevel()
     {
         int level = PlayerUpgradeManager.Instance.armorLevel;
         int durability = GetArmorDurability(level);
 
+        ICharacter character = GetComponent<ICharacter>() ?? GetComponentInParent<ICharacter>();
+        if (character == null)
+        {
+            foreach (var c in FindObjectsOfType<MonoBehaviour>())
+                if (c is ICharacter ic) { character = ic; break; }
+        }
+
+        IInventory inventory = character != null ? character.inventory : GetComponentInParent<IInventory>();
+        if (inventory == null) { Debug.LogWarning("[NeoFPS] EquipArmor: 인벤토리 없음"); return; }
+
+        // 레벨과 무관하게 방어구 아이템을 인벤토리에 직접 추가 (픽업 불필요)
+        if (armorItemPrefabs != null)
+        {
+            foreach (var prefab in armorItemPrefabs)
+            {
+                if (prefab == null) continue;
+                inventory.AddItemFromPrefab(prefab);
+            }
+        }
+
+        // 각 방어구 핸들러의 내구도를 레벨에 맞게 설정
         ArmouredDamageHandler[] handlers = GetComponentsInChildren<ArmouredDamageHandler>(true);
         foreach (var h in handlers) ApplyArmorDurability(h, durability, level);
     }

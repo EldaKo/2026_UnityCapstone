@@ -62,6 +62,8 @@ public static class SaveManager
         foreach (var kv in FacilityLevelTracker.All)
             data.facilities.Add(new FacilitySave { facilityName = kv.Key, currentLevel = kv.Value });
 
+        data.clearedStages = new System.Collections.Generic.List<string>(StageProgress.All);
+
         foreach (var f in Object.FindObjectsOfType<FacilityScript>(true))
         {
             if (GetSavedFacility(data, f.facilityName) != null) continue;
@@ -113,6 +115,7 @@ public static class SaveManager
         PendingLoad = null;
         SaveOnHideoutLoad = false;
         FacilityLevelTracker.Clear();
+        StageProgress.Clear();
         ResetPersistentSingletons();
         SceneManager.LoadScene(HideoutScene);
     }
