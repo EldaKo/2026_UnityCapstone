@@ -3,12 +3,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 1. SpecialEffect(특수 효과) 타입 추가
 public enum UpgradeType
 {
     None,
     Armor,
     Weapon,
-    Health
+    Health,
+    SpecialEffect
 }
 
 [System.Serializable]
@@ -54,6 +56,10 @@ public class FacilityScript : MonoBehaviour
 
     [Tooltip("이 시설을 한 레벨 올리는 데 필요한 재료들. 실제 요구치는 baseAmount × currentLevel")]
     public List<MaterialRequirement> upgradeMaterials = new List<MaterialRequirement>();
+    
+    // 2. 레벨업 시 증가할 수치 추가 (체력 증가량 등)
+    [Tooltip("레벨업 시 증가할 수치 (예: 체력 증가량)")]
+    public float upgradeValuePerLevel = 10f; 
 
     [Header("UI 패널 (이 시설 전용)")]
     public GameObject panelRoot;
@@ -170,6 +176,7 @@ public class FacilityScript : MonoBehaviour
         if (upgradeButton != null) upgradeButton.interactable = canUpgrade;
     }
 
+    // 3. LevelUp 함수에 체력 증가 및 특수 효과 로직 통합
     public void LevelUp()
     {
         currentLevel++;
@@ -180,6 +187,44 @@ public class FacilityScript : MonoBehaviour
         {
             if (upgradeType == UpgradeType.Armor)
                 PlayerUpgradeManager.Instance.armorLevel = currentLevel;
+            else if (upgradeType == UpgradeType.Weapon)
+                Debug.Log("무기 업그레이드 적용");
+        }
+
+        // 체력 증가 처리
+        if (upgradeType == UpgradeType.Health)
+        {
+            ApplyHealthUpgrade(upgradeValuePerLevel);
+        }
+        // 특수 효과 처리
+        else if (upgradeType == UpgradeType.SpecialEffect)
+        {
+            // PlayerUpgradeManager.Instance.speedMultiplier += upgradeValuePerLevel; (예시)
+            Debug.Log($"특수 효과 적용! 수치: {upgradeValuePerLevel} 증가");
+        }
+    }
+
+    // 4. 체력 증가 헬퍼 함수
+    private void ApplyHealthUpgrade(float amount)
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            NeoFPS.BasicHealthManager healthManager = player.GetComponentInChildren<NeoFPS.BasicHealthManager>();
+            if (healthManager != null)
+            {
+                healthManager.healthMax += amount;
+                healthManager.AddHealth(amount);
+                Debug.Log($"플레이어 최대 체력이 {amount}만큼 증가했습니다! (현재 최대 체력: {healthManager.healthMax})");
+            }
+            else
+            {
+                Debug.LogError("플레이어에게 BasicHealthManager 컴포넌트가 없습니다.");
+            }
+        }
+        else
+        {
+            Debug.LogError("Player 태그를 가진 게임 오브젝트를 찾을 수 없습니다.");
         }
     }
 
