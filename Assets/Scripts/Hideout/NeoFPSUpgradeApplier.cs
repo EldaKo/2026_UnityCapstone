@@ -9,8 +9,8 @@ public class NeoFPSUpgradeApplier : MonoBehaviour
     [Tooltip("방어구 시설 레벨별 최대 내구도. index = 레벨. 헬멧/바디 동일하게 적용. 레벨 3 이상은 마지막 값 사용")]
     public int[] armorDurabilityByLevel = new int[] { 0, 10, 20, 30 };
 
-    [Tooltip("씬 시작 시 InteractivePickup_Armour* 픽업을 자동 수령해서 항상 착용 상태로 만듦")]
-    public bool autoEquipArmorAtStart = true;
+    [Tooltip("입장 시 자동으로 인벤토리에 추가/착용할 방어구 아이템 프리팹 (Armour_Body, Armour_Helmet 등)")]
+    public GameObject[] armorItemPrefabs;
 
     void Start()
     {
@@ -21,43 +21,78 @@ public class NeoFPSUpgradeApplier : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
 
-        if (autoEquipArmorAtStart) AutoEquipArmorPickups();
-
         if (PlayerUpgradeManager.Instance == null) yield break;
 
-        ApplyArmorUpgrade();
+        EquipArmorByLevel();
+        EquipSelectedWeapon();
         ApplyWeaponUpgrade();
     }
 
-    private void AutoEquipArmorPickups()
+    private void EquipSelectedWeapon()
     {
+        var db = WeaponData.Get();
+        if (db == null) return;
+
+        var weapon = db.GetEquippedOrFirst();
+        if (weapon == null || weapon.weaponPrefab == null) return;
+
         ICharacter character = GetComponent<ICharacter>() ?? GetComponentInParent<ICharacter>();
         if (character == null)
         {
-            // 마지막 폴백: 씬에서 캐릭터 검색
             foreach (var c in FindObjectsOfType<MonoBehaviour>())
-            {
                 if (c is ICharacter ic) { character = ic; break; }
-            }
         }
-        if (character == null) { Debug.LogWarning("[NeoFPS] AutoEquip: ICharacter 없음"); return; }
 
-        foreach (var pickup in FindObjectsOfType<InteractivePickup>())
+        IInventory inventory = character != null ? character.inventory : GetComponentInParent<IInventory>();
+        if (inventory == null) { Debug.LogWarning("[NeoFPS] EquipWeapon: 인벤토리 없음"); return; }
+
+        // 기본 장착 무기(리볼버 등)가 드랍되지 않도록, 기존 화기를 먼저 제거
+        var existing = inventory.GetItems();
+        if (existing != null)
         {
-            if (pickup == null) continue;
-            string n = pickup.gameObject.name;
-            if (!n.Contains("Armour") && !n.Contains("Armor")) continue;
-
-            pickup.Interact(character);
-            Debug.Log($"[NeoFPS] AutoEquip: {n}");
+            var toRemove = new System.Collections.Generic.List<IInventoryItem>();
+            foreach (var it in existing)
+                if (it != null && it.GetComponent<ModularFirearm>() != null)
+                    toRemove.Add(it);
+            foreach (var it in toRemove)
+                inventory.RemoveItem(it);
         }
+
+        inventory.AddItemFromPrefab(weapon.weaponPrefab);
+
+        // 지정 무기를 즉시 wield (Firearm 카테고리 = 슬롯0)
+        if (character != null && character.quickSlots != null)
+            character.quickSlots.SelectSlot(0);
+
+        Debug.Log($"[NeoFPS] 무기 지급: {weapon.displayName}");
     }
 
-    private void ApplyArmorUpgrade()
+    private void EquipArmorByLevel()
     {
         int level = PlayerUpgradeManager.Instance.armorLevel;
         int durability = GetArmorDurability(level);
 
+        ICharacter character = GetComponent<ICharacter>() ?? GetComponentInParent<ICharacter>();
+        if (character == null)
+        {
+            foreach (var c in FindObjectsOfType<MonoBehaviour>())
+                if (c is ICharacter ic) { character = ic; break; }
+        }
+
+        IInventory inventory = character != null ? character.inventory : GetComponentInParent<IInventory>();
+        if (inventory == null) { Debug.LogWarning("[NeoFPS] EquipArmor: 인벤토리 없음"); return; }
+
+        // 레벨과 무관하게 방어구 아이템을 인벤토리에 직접 추가 (픽업 불필요)
+        if (armorItemPrefabs != null)
+        {
+            foreach (var prefab in armorItemPrefabs)
+            {
+                if (prefab == null) continue;
+                inventory.AddItemFromPrefab(prefab);
+            }
+        }
+
+        // 각 방어구 핸들러의 내구도를 레벨에 맞게 설정
         ArmouredDamageHandler[] handlers = GetComponentsInChildren<ArmouredDamageHandler>(true);
         foreach (var h in handlers) ApplyArmorDurability(h, durability, level);
     }

@@ -87,6 +87,14 @@ public class EnemyAI : MonoBehaviour
     [Tooltip("사망 후 시체 유지 시간 (0 이하 = 영원히, 양수 = 그 시간 후 사라짐)")]
     [SerializeField] float corpseLifetime = -1f;
 
+    [Header("Loot Drop")]
+    [Tooltip("사망 시 드랍 후보 아이템 프리팹들 (Assets/Inventory의 재료들). 이 중 하나가 랜덤 드랍됨")]
+    [SerializeField] GameObject[] dropPrefabs;
+    [Tooltip("아이템을 드랍할 확률 (0 = 안 함, 1 = 항상)")]
+    [Range(0f, 1f)][SerializeField] float dropChance = 0.35f;
+    [Tooltip("드랍 위치 높이 오프셋 (시체 위로 살짝 띄움)")]
+    [SerializeField] float dropHeightOffset = 0.5f;
+
     // --- internal ---
     NavMeshAgent agent;
     Animator anim;
@@ -516,11 +524,44 @@ public class EnemyAI : MonoBehaviour
         // 바닥에 시체 정렬 (NavMeshAgent 꺼지면 캐릭터가 공중에 뜨는 문제 해결)
         SnapCorpseToGround();
 
+        // 재료 드랍
+        TryDropLoot();
+
+        // 탄약 드랍 (플레이어가 장착한 무기 탄종에 맞춰)
+        TryDropAmmo();
+
         // 시체 자동 제거 (옵션)
         if (corpseLifetime > 0f)
         {
             Destroy(gameObject, corpseLifetime);
         }
+    }
+
+    void TryDropLoot()
+    {
+        if (dropPrefabs == null || dropPrefabs.Length == 0) return;
+        if (Random.value > dropChance) return;
+
+        var prefab = dropPrefabs[Random.Range(0, dropPrefabs.Length)];
+        if (prefab == null) return;
+
+        Vector3 pos = transform.position + Vector3.up * dropHeightOffset;
+        Instantiate(prefab, pos, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
+    }
+
+    void TryDropAmmo()
+    {
+        if (Random.value > dropChance) return;
+
+        var db = WeaponData.Get();
+        if (db == null) { Debug.LogWarning("[Ammo] WeaponDatabase 못 찾음 (Resources/WeaponDatabase)"); return; }
+
+        var weapon = db.GetEquippedOrFirst();
+        if (weapon == null || weapon.ammoPickupPrefab == null) return;
+
+        Vector3 pos = transform.position + Vector3.up * dropHeightOffset
+                      + new Vector3(Random.Range(-0.5f, 0.5f), 0f, Random.Range(-0.5f, 0.5f));
+        Instantiate(weapon.ammoPickupPrefab, pos, Quaternion.Euler(0f, Random.Range(0f, 360f), 0f));
     }
 
     void SnapCorpseToGround()

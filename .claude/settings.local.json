@@ -18,7 +18,11 @@
       "mcp__UnityMCP__batch_execute",
       "mcp__UnityMCP__validate_script",
       "mcp__UnityMCP__manage_asset",
-      "mcp__UnityMCP__manage_editor"
+      "mcp__UnityMCP__manage_editor",
+      "Bash(grep ^guid: Assets/Inventory/__TRACKED_VAR__.prefab.meta)",
+      "Bash(grep -B1 'm_Name: __TRACKED_VAR__' Assets/Inventory/__TRACKED_VAR__.prefab)",
+      "Bash(grep -n '^--- !u!1 &' Assets/NeoFPS/Samples/Shared/Prefabs/Health/__TRACKED_VAR__.prefab)",
+      "mcp__UnityMCP__manage_build"
     ]
   }
 }

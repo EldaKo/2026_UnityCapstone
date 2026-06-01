@@ -230,6 +230,9 @@ public class FacilityScript : MonoBehaviour
 
     private void OnMouseDown()
     {
+        var es = UnityEngine.EventSystems.EventSystem.current;
+        if (es != null && es.IsPointerOverGameObject()) return;
+
         if (HideoutUIManager.Instance != null)
             HideoutUIManager.Instance.OpenFacility(this);
         else

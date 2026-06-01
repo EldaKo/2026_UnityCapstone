@@ -62,6 +62,10 @@ public static class SaveManager
         foreach (var kv in FacilityLevelTracker.All)
             data.facilities.Add(new FacilitySave { facilityName = kv.Key, currentLevel = kv.Value });
 
+        data.clearedStages = new System.Collections.Generic.List<string>(StageProgress.All);
+        data.unlockedWeapons = new System.Collections.Generic.List<string>(PlayerLoadout.AllUnlocked);
+        data.equippedWeapon = PlayerLoadout.EquippedWeapon;
+
         foreach (var f in Object.FindObjectsOfType<FacilityScript>(true))
         {
             if (GetSavedFacility(data, f.facilityName) != null) continue;
@@ -113,6 +117,17 @@ public static class SaveManager
         PendingLoad = null;
         SaveOnHideoutLoad = false;
         FacilityLevelTracker.Clear();
+        StageProgress.Clear();
+        PlayerLoadout.Clear();
+
+        // 첫 무기는 기본 해금 + 장착
+        var db = WeaponData.Get();
+        if (db != null && db.weapons.Count > 0 && db.weapons[0] != null)
+        {
+            PlayerLoadout.Unlock(db.weapons[0].id);
+            PlayerLoadout.Equip(db.weapons[0].id);
+        }
+
         ResetPersistentSingletons();
         SceneManager.LoadScene(HideoutScene);
     }
