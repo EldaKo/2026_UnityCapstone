@@ -80,6 +80,19 @@ public class HideoutUIManager : MonoBehaviour
             SaveManager.Save(SaveManager.CaptureCurrentState());
         }
         SaveManager.SaveOnHideoutLoad = false;
+
+        EnsureDefaultWeapon();
+    }
+
+    // 장착 무기가 없으면 첫 무기를 자동 해금·장착 (어느 경로로 진입해도 무기 보장)
+    private void EnsureDefaultWeapon()
+    {
+        if (!string.IsNullOrEmpty(PlayerLoadout.EquippedWeapon)) return;
+        var db = WeaponData.Get();
+        if (db == null || db.weapons.Count == 0 || db.weapons[0] == null) return;
+        PlayerLoadout.Unlock(db.weapons[0].id);
+        PlayerLoadout.Equip(db.weapons[0].id);
+        Debug.Log($"[Loadout] 기본 무기 자동 장착: {db.weapons[0].displayName}");
     }
 
     private void MergeRaidLootIntoSavedStash()

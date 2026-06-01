@@ -91,7 +91,7 @@ public class EnemyAI : MonoBehaviour
     [Tooltip("사망 시 드랍 후보 아이템 프리팹들 (Assets/Inventory의 재료들). 이 중 하나가 랜덤 드랍됨")]
     [SerializeField] GameObject[] dropPrefabs;
     [Tooltip("아이템을 드랍할 확률 (0 = 안 함, 1 = 항상)")]
-    [Range(0f, 1f)][SerializeField] float dropChance = 0.5f;
+    [Range(0f, 1f)][SerializeField] float dropChance = 0.35f;
     [Tooltip("드랍 위치 높이 오프셋 (시체 위로 살짝 띄움)")]
     [SerializeField] float dropHeightOffset = 0.5f;
 
@@ -554,8 +554,9 @@ public class EnemyAI : MonoBehaviour
         if (Random.value > dropChance) return;
 
         var db = WeaponData.Get();
-        if (db == null) return;
-        var weapon = db.FindById(PlayerLoadout.EquippedWeapon);
+        if (db == null) { Debug.LogWarning("[Ammo] WeaponDatabase 못 찾음 (Resources/WeaponDatabase)"); return; }
+
+        var weapon = db.GetEquippedOrFirst();
         if (weapon == null || weapon.ammoPickupPrefab == null) return;
 
         Vector3 pos = transform.position + Vector3.up * dropHeightOffset

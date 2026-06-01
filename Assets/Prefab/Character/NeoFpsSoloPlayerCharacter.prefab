@@ -474,7 +474,7 @@ MonoBehaviour:
   m_HolsterAction: 0
   m_EmptyAsBackup: 0
   m_SlotCount: 3
-  m_StartingSlotChoice: 0
+  m_StartingSlotChoice: -1
   m_StartingOrder: 000000000100000002000000
   m_AutoSwitchStyle: 0
   m_BackupItem: {fileID: 0}

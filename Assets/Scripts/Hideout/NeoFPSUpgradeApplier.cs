@@ -33,7 +33,7 @@ public class NeoFPSUpgradeApplier : MonoBehaviour
         var db = WeaponData.Get();
         if (db == null) return;
 
-        var weapon = db.FindById(PlayerLoadout.EquippedWeapon);
+        var weapon = db.GetEquippedOrFirst();
         if (weapon == null || weapon.weaponPrefab == null) return;
 
         ICharacter character = GetComponent<ICharacter>() ?? GetComponentInParent<ICharacter>();
@@ -59,6 +59,11 @@ public class NeoFPSUpgradeApplier : MonoBehaviour
         }
 
         inventory.AddItemFromPrefab(weapon.weaponPrefab);
+
+        // 지정 무기를 즉시 wield (Firearm 카테고리 = 슬롯0)
+        if (character != null && character.quickSlots != null)
+            character.quickSlots.SelectSlot(0);
+
         Debug.Log($"[NeoFPS] 무기 지급: {weapon.displayName}");
     }
 

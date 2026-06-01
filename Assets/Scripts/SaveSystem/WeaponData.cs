@@ -40,6 +40,14 @@ public class WeaponData : ScriptableObject
         return null;
     }
 
+    // 현재 장착 무기, 없으면 첫 무기로 폴백
+    public WeaponEntry GetEquippedOrFirst()
+    {
+        var w = FindById(PlayerLoadout.EquippedWeapon);
+        if (w != null) return w;
+        return weapons.Count > 0 ? weapons[0] : null;
+    }
+
     public int IndexOf(string id)
     {
         for (int i = 0; i < weapons.Count; i++)

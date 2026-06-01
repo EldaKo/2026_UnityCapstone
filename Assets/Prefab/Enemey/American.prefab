@@ -194,7 +194,7 @@ MonoBehaviour:
   - {fileID: 2387031305938062736, guid: 3a9d722196b9a3c41b6cefd6ac80f859, type: 3}
   - {fileID: 6790612850742721889, guid: b29fcdd448f12a44f82894461a3bf1ad, type: 3}
   - {fileID: 4386361694059629678, guid: 5e2e3e1c9bf151a408fa2ff680b63d22, type: 3}
-  dropChance: 0.5
+  dropChance: 0.35
   dropHeightOffset: 0.5
 --- !u!114 &7099227648610990168
 MonoBehaviour:
