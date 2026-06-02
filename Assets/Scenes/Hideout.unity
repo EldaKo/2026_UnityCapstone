@@ -14315,11 +14315,11 @@ MonoBehaviour:
   upgradeType: 1
   upgradeMaterials:
   - material: {fileID: 11400000, guid: 7ac4d2b7ef014b8418c140accc0d18a4, type: 2}
-    baseAmount: 0
+    baseAmount: 3
   - material: {fileID: 11400000, guid: 0c2777c0eae967646adc45b994850e57, type: 2}
-    baseAmount: 0
+    baseAmount: 5
   - material: {fileID: 11400000, guid: 786d74b1f79ab914c91d35ed677b14eb, type: 2}
-    baseAmount: 0
+    baseAmount: 2
   panelRoot: {fileID: 756538002}
   iconImage: {fileID: 1565460320}
   nameText: {fileID: 1408144867}

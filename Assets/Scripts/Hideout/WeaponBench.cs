@@ -88,19 +88,9 @@ public class WeaponBench : MonoBehaviour
         var db = WeaponData.Get();
         if (db == null || db.weapons.Count == 0) return;
         int next = _index + dir;
-        if (next < 0 || next > GetMaxReachableIndex(db)) return; // 경계 넘으면 이동 안 함 (순환 X)
+        if (next < 0 || next > db.weapons.Count - 1) return; // 전체 목록 끝까지 탐색 가능 (순환 X)
         _index = next;
         Refresh();
-    }
-
-    // 탐색 가능한 최대 인덱스 = 해금된 무기 중 가장 뒤 + 1 (다음 해금 대상까지만)
-    private int GetMaxReachableIndex(WeaponData db)
-    {
-        int maxUnlocked = 0;
-        for (int i = 0; i < db.weapons.Count; i++)
-            if (db.weapons[i] != null && PlayerLoadout.IsUnlocked(db.weapons[i].id))
-                maxUnlocked = i;
-        return Mathf.Min(maxUnlocked + 1, db.weapons.Count - 1);
     }
 
     private void Refresh()
@@ -108,8 +98,8 @@ public class WeaponBench : MonoBehaviour
         var db = WeaponData.Get();
         if (db == null || db.weapons.Count == 0) return;
 
-        int maxReachable = GetMaxReachableIndex(db);
-        _index = Mathf.Clamp(_index, 0, maxReachable);
+        int last = db.weapons.Count - 1;
+        _index = Mathf.Clamp(_index, 0, last);
 
         var weapon = db.weapons[_index];
         if (weapon == null) return;
@@ -117,9 +107,9 @@ public class WeaponBench : MonoBehaviour
         if (weaponIcon != null) { weaponIcon.sprite = weapon.weaponIcon; weaponIcon.enabled = weapon.weaponIcon != null; }
         if (weaponNameText != null) weaponNameText.text = weapon.displayName;
 
-        // 화살표: 경계에서 비활성 (순환 없음, 잠긴 무기 너머로 못 감)
+        // 화살표: 목록 양 끝에서만 비활성 (순환 없음, 잠긴 무기도 넘겨볼 수 있음)
         if (prevButton != null) prevButton.interactable = _index > 0;
-        if (nextButton != null) nextButton.interactable = _index < maxReachable;
+        if (nextButton != null) nextButton.interactable = _index < last;
 
         bool unlocked = PlayerLoadout.IsUnlocked(weapon.id);
         bool equipped = PlayerLoadout.EquippedWeapon == weapon.id;

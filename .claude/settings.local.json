@@ -24,7 +24,8 @@
       "Bash(grep -n '^--- !u!1 &' Assets/NeoFPS/Samples/Shared/Prefabs/Health/__TRACKED_VAR__.prefab)",
       "mcp__UnityMCP__manage_build",
       "Bash(grep itemName: Assets/Inventory/ItemData/__TRACKED_VAR__.asset)",
-      "Bash(grep icon: Assets/Inventory/ItemData/__TRACKED_VAR__.asset)"
+      "Bash(grep icon: Assets/Inventory/ItemData/__TRACKED_VAR__.asset)",
+      "PowerShell(foreach \\($c in '641b74d','af29536','ffeeb89','744714a','bded892'\\) { Write-Output \"=== $c ===\"; git show \"${c}:Assets/Scenes/Hideout.unity\" | Select-String -Pattern '7ac4d2b7ef014b8418c140accc0d18a4','0c2777c0eae967646adc45b994850e57' -Context 0,1 })"
     ]
   }
 }
