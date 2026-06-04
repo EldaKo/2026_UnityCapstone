@@ -24,11 +24,12 @@
 
 | 메인 화면 | 레이드 (도시 맵) | 은신처 (Hideout) |
 |:---------:|:----------------:|:----------------:|
-| ![Main](./Screenshots/main.png) | ![Raid](./Screenshots/raid.png) | ![Hideout](./Screenshots/hideout.png) |
+| <img width="1918" height="1008" alt="Image" src="https://github.com/user-attachments/assets/2aa796a0-e69a-4e4a-80ca-3af83b1457e0" /> | <img width="1805" height="1016" alt="Image" src="https://github.com/user-attachments/assets/24e50cbf-4c21-4df2-b559-b5b22affa4d6" /> | <img width="1801" height="1007" alt="Image" src="https://github.com/user-attachments/assets/3fdc7bf3-aaf8-46b0-b168-c9f9ab8c7718" /> |
 
 | 전투 장면 | 탈출 시퀀스 | 인벤토리 UI |
 |:---------:|:-----------:|:-----------:|
-| ![Combat](./Screenshots/combat.png) | ![Escape](./Screenshots/escape.png) | ![Inventory](./Screenshots/inventory.png) |
+| <img width="1813" height="1012" alt="Image" src="https://github.com/user-attachments/assets/1d830d68-f311-4b8a-bc2b-ebe2b1c200d8" /> | <img width="1805" height="1016" alt="Image" src="https://github.com/user-attachments/assets/23f74e4e-4a56-4e11-845e-c0805e2ae7b9" /> | <img width="1805" height="1012" alt="Image" src="https://github.com/user-attachments/assets/a4bf1ba7-cfae-4fed-ac91-6ffcd640b3b8" /> |
+
 
 ---
 
