@@ -134,8 +134,14 @@ Assets/
 | 2026.05 | 레이드 맵 레벨 디자인, 탈출 기믹, UI 구현 |
 | 2026.06 | 통합 테스트, 버그 수정, 데모 빌드 완성 |
 
+
+## 시연 영상
+https://youtu.be/Bs93Zv1I3fI
+
 ---
 
 <p align="center">
   <sub>© 2026 Uncovered : Remanent Team — 개발 기간 2026.03 ~ 2026.06</sub>
 </p>
+
+---
