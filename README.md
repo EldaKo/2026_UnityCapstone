@@ -20,6 +20,22 @@
 
 ---
 
+## 👀 Members
+
+<table width="50%" align="center">
+    <tr>
+        <td align="center"><img src="https://avatars.githubusercontent.com/u/65843682?v=4" /></td>
+        <td align="center"><img src="https://avatars.githubusercontent.com/u/45908859?v=4" /></td>
+        <td align="center"><img src="https://avatars.githubusercontent.com/u/180899809?v=4"></td>
+    </tr>
+    <tr>
+        <td align="center"><b><a href="https://github.com/EldaKo">고현아</a></b></td>
+        <td align="center"><b><a href="https://github.com/ggaa1">고범창</a></b></td>
+        <td align="center"><b><a href="https://github.com/scp5008">송태훈</a></b></td>
+    </tr>
+</table>
+---
+
 ## 🖼️ 스크린샷
 
 | 메인 화면 | 레이드 (도시 맵) | 은신처 (Hideout) |
